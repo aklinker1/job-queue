@@ -1,0 +1,5 @@
+data
+node_modules
+.vite
+lib/public
+.DS_Store

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "name": "@aklinker1/job-queue",
+  "version": "0.1.0",
+  "tasks": {
+    "example": "deno run --allow-env --allow-read --allow-ffi --allow-write example.ts",
+    "publish": "pushd ../ui && deno task build && popd && deno publish"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./persisters/bun-sqlite": "./src/persisters/bun-sqlite.ts",
+    "./persisters/deno-sqlite": "./src/persisters/deno-sqlite.ts",
+    "./server": "./src/server.ts"
+  },
+  "imports": {
+    "@db/sqlite": "jsr:@db/sqlite@^0.12.0",
+    "@types/bun": "npm:@types/bun@^1.1.14",
+    "p-queue": "npm:p-queue@^8.0.1",
+    "serialize-error": "npm:serialize-error@^11.0.3",
+    "yocto-queue": "npm:yocto-queue@^1.1.1"
+  }
+}

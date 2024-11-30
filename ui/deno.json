@@ -1,0 +1,20 @@
+{
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "tasks": {
+    "dev": "deno run -A --node-modules-dir --watch dev.ts",
+    "dev2": "deno run -A --node-modules-dir npm:vite",
+    "build": "deno run -A --node-modules-dir npm:vite build"
+  },
+  "imports": {
+    "@aklinker1/solid-primatives": "jsr:@aklinker1/solid-primatives@^0.3.11",
+    "@iconify-json/heroicons": "npm:@iconify-json/heroicons@^1.2.1",
+    "@solidjs/router": "npm:@solidjs/router@^0.15.1",
+    "@std/assert": "jsr:@std/assert@1",
+    "@unocss/reset": "npm:@unocss/reset@^0.65.0-beta.2",
+    "solid-js": "npm:solid-js@^1.9.3",
+    "unocss": "npm:unocss@^0.65.0-beta.2",
+    "vite": "npm:vite@^6.0.1",
+    "vite-plugin-singlefile": "npm:vite-plugin-singlefile@^2.0.3",
+    "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.0"
+  }
+}
