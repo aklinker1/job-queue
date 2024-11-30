@@ -5,7 +5,7 @@
   "license": "MIT",
   "tasks": {
     "example": "deno run --allow-env --allow-read --allow-ffi --allow-write example.ts",
-    "publish": "cd ../ui && deno task build && cd ../lib && deno lint && changelogen --release && deno publish && git push --follow-tags"
+    "publish": "deno run -A publish.ts"
   },
   "exports": {
     ".": "./src/index.ts",
