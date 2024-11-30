@@ -35,7 +35,7 @@ pnpm dlx jsr add @aklinker1/job-queue
      }
    })
    ```
-   > [!INFO]
+   > [!NOTE]
    > Tasks can have as many arguments as you'd like, but all arguments must be serializable via `JSON.stringify`. So no classes, circular objects, or functions.
 
    > [!WARNING]

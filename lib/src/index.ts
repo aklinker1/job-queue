@@ -1,3 +1,7 @@
+/**
+ * Main queue utils.
+ * @module
+ */
 // deno-lint-ignore-file
 import { createGroupQueue } from "./group-queue.ts";
 import { createParallelQueue } from "./parallel-queue.ts";

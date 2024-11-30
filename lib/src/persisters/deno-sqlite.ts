@@ -1,3 +1,7 @@
+/**
+ * Persist tasks using [`@db/sqlite`](https://jsr.io/@db/sqlite).
+ * @module
+ */
 import { dirname } from "node:path";
 import type { GetCountsResponse, Persister, QueueEntry } from "../persister.ts";
 import { QueueState } from "../persister.ts";
