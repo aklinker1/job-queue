@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.2.1
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.0...v0.2.1)
+
+### 📖 Documentation
+
+- Remove NPM and PNPM install steps ([132c973](https://github.com/aklinker1/job-queue/commit/132c973))
+- Update README ([337fd95](https://github.com/aklinker1/job-queue/commit/337fd95))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.2.0
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.4...v0.2.0)
