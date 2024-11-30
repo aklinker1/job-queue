@@ -17,6 +17,8 @@ bunx jsr add @aklinker1/job-queue
 
 ## Usage
 
+### Basic Usage
+
 ```ts
 import { createQueue } from '@aklinker1/job-queue';
 import { createDenoSqlitePersister } from '@aklinker1/job-queue/persisters/deno-sqlite';
@@ -36,12 +38,46 @@ const processDocument = queue.defineTask({
 
 // 3. Run the task
 processDocument.performAsync("/path/to/file.pdf");
-processDocument.performAt(new Date("2025-04-26 3:24:31"));
+processDocument.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
 processDocument.performIn(30e3, "/path/to/file.pdf");
 ```
 
+### Tasks
+
+Use `queue.defineTask` to create as many tasks as you need. Tasks can be chained together:
+
+```ts
+import { walk, type WalkEntry } from '@std/fs';
+
+const processDirectory = queue.defineTask({
+  name: "processDirectory",
+  perform: async (dir: string) => {
+    const entries = await walk(dir, {
+      exts: [".pdf"],
+    });
+
+    entries.forEach(entry => {
+      processPdf.performAsync(entry)
+    })
+  }
+})
+
+const processPdf = queue.defineTask({
+  name: "processPdf",
+  perform: async (entry: WalkEntry) => {
+    // Do something with the PDF
+  }
+})
+```
+
 > [!NOTE]
-> Tasks can have as many arguments as you'd like, but all arguments must be serializable via `JSON.stringify`. So no classes, circular objects, or functions.
+> Task arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
 
 > [!WARNING]
-> Tasks must be [idempotent](https://en.wikipedia.org/wiki/Idempotence), they must be safe to re-run. If the application is stopped (from power loss or plain restarts), tasks might be half processed. Alternatively, if the task throws an error, it will be re-run several times.
+> Tasks must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, restart, etc), tasks will likely be interrupted half-way through. Similarly, if the task throws an error, it will be re-run at a later point.
+>
+> Basically, each task is guaranteed to ran **at least once**, but **not only once**.
+
+### Add Dashboard to Web App
+
+See [`createServer` docs](https://jsr.io/@aklinker1/job-queue/doc/server/~/createServer).
