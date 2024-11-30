@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.4
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.3...v0.1.4)
+
+### 📖 Documentation
+
+- Add README.md ([1a31d1f](https://github.com/aklinker1/job-queue/commit/1a31d1f))
+- Add missing JSDoc ([61766d2](https://github.com/aklinker1/job-queue/commit/61766d2))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.1.3
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.2...v0.1.3)
