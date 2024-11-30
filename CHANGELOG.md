@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.1.2
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.1...v0.1.2)
+
+### 📖 Documentation
+
+- Remove module doc from index ([f43c374](https://github.com/aklinker1/job-queue/commit/f43c374))
+
+### 🏡 Chore
+
+- Fix publish task ([378ad31](https://github.com/aklinker1/job-queue/commit/378ad31))
+- Add changelog ([5866c0d](https://github.com/aklinker1/job-queue/commit/5866c0d))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.1.1
 
 [compare changes](https://undefined/aklinker1/job-queue/compare/v0.1.0...v0.1.1)
