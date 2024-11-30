@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.3
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.2...v0.2.3)
+
+### 🩹 Fixes
+
+- Remove dependency on @std/fs ([da12c37](https://github.com/aklinker1/job-queue/commit/da12c37))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.2.2
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.1...v0.2.2)
