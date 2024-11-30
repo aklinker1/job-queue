@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Persist tasks using [`@db/sqlite`](https://jsr.io/@db/sqlite).
  * @module
@@ -11,14 +12,17 @@ import type {
 } from "../persister.ts";
 import { QueueState } from "../persister.ts";
 import { mkdirSync } from "node:fs";
-import { Database } from "bun:sqlite";
 import { stringifyError } from "../utils.ts";
 
 /**
  * Create a `Persister` backed by [`bun:sqlite`](https://bun.sh/docs/api/sqlite).
  * @see {Persister}
  */
-export function createDenoSqlitePersister(file?: string): Persister {
+export async function createDenoSqlitePersister(
+  file?: string,
+): Promise<Persister> {
+  // @ts-expect-error: External dependency not listed in deno.json
+  const { Database } = await import("bun:sqlite");
   const sqliteFile = file ?? "queue.db";
   const sqliteDir = dirname(sqliteFile);
   if (sqliteDir) mkdirSync(sqliteDir, { recursive: true });

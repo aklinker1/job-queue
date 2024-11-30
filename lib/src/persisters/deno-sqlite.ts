@@ -6,14 +6,16 @@ import { dirname } from "node:path";
 import type { GetCountsResponse, Persister, QueueEntry } from "../persister.ts";
 import { QueueState } from "../persister.ts";
 import { mkdirSync } from "node:fs";
-import { Database } from "@db/sqlite";
 import { stringifyError } from "../utils.ts";
 
 /**
  * Create a `Persister` backed by [`@db/sqlite`](https://jsr.io/@db/sqlite).
  * @see {Persister}
  */
-export function createDenoSqlitePersister(file?: string): Persister {
+export async function createDenoSqlitePersister(
+  file?: string,
+): Promise<Persister> {
+  const { Database } = await import("@db/sqlite");
   const sqliteFile = file ?? "queue.db";
   const sqliteDir = dirname(sqliteFile);
   if (sqliteDir) mkdirSync(sqliteDir, { recursive: true });

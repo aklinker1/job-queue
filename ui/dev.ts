@@ -21,9 +21,9 @@ function JobServer(): PluginOption {
   const port = 3333;
   return {
     name: "dev",
-    configureServer(server) {
+    async configureServer(server) {
       const queue = createQueue({
-        persister: createDenoSqlitePersister("../lib/data/queue.db"),
+        persister: await createDenoSqlitePersister("../lib/data/queue.db"),
       });
       let jobServer: Deno.HttpServer | undefined;
       server.httpServer?.once("listening", () => {

@@ -3,7 +3,7 @@ import { createDenoSqlitePersister } from "./src/persisters/deno-sqlite.ts";
 import { delay } from "jsr:@std/async@^1.0.9";
 
 const queue = createQueue({
-  persister: createDenoSqlitePersister("data/queue.db"),
+  persister: await createDenoSqlitePersister("data/queue.db"),
   concurrency: 2,
   debug: true,
 });

@@ -11,7 +11,7 @@ bunx jsr add @aklinker1/job-queue
 
 - 💽 Persistence
 - 🎛️ Multiple queues with adjustable weights
-- ❗ Error handling and retries
+- 🚧 Error handling and retries
 - 🦕 Support Deno and Bun runtimes
 - 📈 Dashboard
 
@@ -25,7 +25,7 @@ import { createDenoSqlitePersister } from '@aklinker1/job-queue/persisters/deno-
 
 // 1. Create a queue
 const queue = createQueue({
-  persister: createDenoSqlitePersister("queue.db"),
+  persister: await createDenoSqlitePersister("queue.db"),
 })
 
 // 2. Define a task
