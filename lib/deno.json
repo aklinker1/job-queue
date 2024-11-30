@@ -5,7 +5,7 @@
   "license": "MIT",
   "tasks": {
     "example": "deno run --allow-env --allow-read --allow-ffi --allow-write example.ts",
-    "publish": "cd ../ui && deno task build && cd ../lib && deno publish --dry-run"
+    "publish": "cd ../ui && deno task build && cd ../lib && deno publish"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -18,5 +18,8 @@
     "p-queue": "npm:p-queue@^8.0.1",
     "serialize-error": "npm:serialize-error@^11.0.3",
     "yocto-queue": "npm:yocto-queue@^1.1.1"
+  },
+  "publish": {
+    "include": ["src", "public", "README.md"]
   }
 }
