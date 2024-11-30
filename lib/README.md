@@ -5,8 +5,6 @@ Lightweight single process job queue. Backed by SQLite. Supports Deno and Bun ru
 ```sh
 deno add jsr:@aklinker1/job-queue
 bunx jsr add @aklinker1/job-queue
-npx jsr add @aklinker1/job-queue
-pnpm dlx jsr add @aklinker1/job-queue
 ```
 
 ## Features
