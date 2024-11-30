@@ -62,6 +62,7 @@ async function bumpVersion() {
     {
       from: `v${currentVersion}`,
       repo: {
+        domain: "github.com",
         provider: "github",
         repo: "aklinker1/job-queue",
       },
