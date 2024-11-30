@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.4
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.3...v0.2.4)
+
+### 🚀 Enhancements
+
+- Add bun support ([8f90efc](https://github.com/aklinker1/job-queue/commit/8f90efc))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.2.3
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.2...v0.2.3)
