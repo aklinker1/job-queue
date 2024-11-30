@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.0
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.4...v0.3.0)
+
+### 🩹 Fixes
+
+- ⚠️  Convert bun and deno sqlite persisters to be async ([cc36d42](https://github.com/aklinker1/job-queue/commit/cc36d42))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Convert bun and deno sqlite persisters to be async ([cc36d42](https://github.com/aklinker1/job-queue/commit/cc36d42))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.2.4
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.3...v0.2.4)
