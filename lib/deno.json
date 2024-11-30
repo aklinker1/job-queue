@@ -2,13 +2,13 @@
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "name": "@aklinker1/job-queue",
   "version": "0.1.0",
+  "license": "MIT",
   "tasks": {
     "example": "deno run --allow-env --allow-read --allow-ffi --allow-write example.ts",
-    "publish": "pushd ../ui && deno task build && popd && deno publish"
+    "publish": "cd ../ui && deno task build && cd ../lib && deno publish --dry-run"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./persisters/bun-sqlite": "./src/persisters/bun-sqlite.ts",
     "./persisters/deno-sqlite": "./src/persisters/deno-sqlite.ts",
     "./server": "./src/server.ts"
   },
