@@ -2,11 +2,10 @@
  * Create an admin dashboard you can add to any WinterCG compliant server.
  * @module
  */
-import { readFile } from "node:fs/promises";
+import { lstat, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import type { JobQueue } from "./index.ts";
 import { fileURLToPath } from "node:url";
-import { exists } from "jsr:@std/fs@0.221";
 
 let cachedPage: string;
 
@@ -29,7 +28,6 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * import { createServer } from '@aklinker1/job-queue/server';
  *
  * const queue = createQueue(...);
- * const server = ;
  *
  * Deno.serve(
  *   createServer({
@@ -45,6 +43,7 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * import { createServer } from '@aklinker1/job-queue/server';
  *
  * const queue = createQueue(...);
+ *
  * new Elysia().mount(createServer({ queue }));
  * ```
  */
@@ -122,4 +121,13 @@ async function findPublicIndexHtmlPath(): Promise<string | undefined> {
   } while (dir.length > 9);
 
   return undefined;
+}
+
+async function exists(file: string): Promise<boolean> {
+  try {
+    await lstat(file);
+    return true;
+  } catch {
+    return false;
+  }
 }
