@@ -4,7 +4,7 @@ import { delay } from "jsr:@std/async@^1.0.9";
 
 const queue = createQueue({
   persister: createDenoSqlitePersister("data/queue.db"),
-  workers: 2,
+  concurrency: 2,
   debug: true,
 });
 
