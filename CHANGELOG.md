@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.2.0
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.4...v0.2.0)
+
+### 🩹 Fixes
+
+- ⚠️  Rename `workers` to `concurrency` ([9e1eb1e](https://github.com/aklinker1/job-queue/commit/9e1eb1e))
+
+### 📖 Documentation
+
+- Add missing JSDoc ([451a49b](https://github.com/aklinker1/job-queue/commit/451a49b))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Rename `workers` to `concurrency` ([9e1eb1e](https://github.com/aklinker1/job-queue/commit/9e1eb1e))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.1.4
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.3...v0.1.4)
