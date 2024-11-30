@@ -5,6 +5,7 @@ import type { Persister, QueueEntry, QueueEntryInsert } from "./persister.ts";
 
 export * from "./persister.ts";
 
+/** Create a job queue. Tasks are defined on the queue once created using `queue.defineTask`. */
 export function createQueue<TQueue extends string = DefaultQueues>(
   options: JobQueueOptions<TQueue>,
 ): JobQueue<TQueue> {
@@ -146,33 +147,52 @@ export interface JobQueueOptions<TQueues extends string> {
   logger?: Logger;
 }
 
+/** Responsible for scheduling and running tasks as well as inspecting task state. */
 export interface JobQueue<TQueueName extends string> extends
   Pick<
     Persister,
     "getCounts" | "getEnqueuedEntries" | "getDeadEntries" | "getFailedEntries"
   > {
+  /**
+   * Define a task on the queue.
+   *
+   * Tasks must be defined synchronously after creating the queue, otherwise restored tasks might not be defined by the time they're re-scheduled.
+   */
   defineTask: <TPerform extends (...args: any[]) => void | Promise<void>>(
     definition: TaskDefinition<TPerform, TQueueName>,
   ) => Task<TPerform, TQueueName>;
 }
 
+/** Define what a task does and which queue it will run in. */
 export interface TaskDefinition<
   TPerform extends (...args: any[]) => void | Promise<void>,
   TQueueName extends string,
 > {
+  /** The task name. */
   name: string;
+  /** The function to execute when the task is ran. */
   perform: TPerform;
+  /**
+   * The queue to run the task in.
+   * @default "default"
+   */
   queue?: TQueueName;
 }
 
+/** Task object used to add the task to the queue. */
 export interface Task<
   TPerform extends (...args: any[]) => void | Promise<void>,
   TQueueName extends string,
 > {
+  /** The name of the task from it's definition. */
   name: string;
+  /** The queue the task will run in, from it's definition. */
   queue: TQueueName;
+  /** Schedule the task to be ran as soon as possible. */
   performAsync(...args: Parameters<TPerform>): void;
+  /** Schedule the task to run at a specific date. */
   performAt(date: number | string | Date, ...args: Parameters<TPerform>): void;
+  /** Schedule the task to run after a delay. */
   performIn(msec: number, ...args: Parameters<TPerform>): void;
 }
 
@@ -184,6 +204,7 @@ const DEFAULT_QUEUES = {
 } as const;
 type DefaultQueues = keyof typeof DEFAULT_QUEUES;
 
+/** Interface used by `createQueue` to print logs. */
 export interface Logger {
   debug: (...args: any[]) => void;
   log: (...args: any[]) => void;

@@ -9,6 +9,10 @@ import { mkdirSync } from "node:fs";
 import { Database } from "@db/sqlite";
 import { stringifyError } from "../utils.ts";
 
+/**
+ * Create a `Persister` backed by [`@db/sqlite`](https://jsr.io/@db/sqlite).
+ * @see {Persister}
+ */
 export function createDenoSqlitePersister(file?: string): Persister {
   const sqliteFile = file ?? "queue.db";
   const sqliteDir = dirname(sqliteFile);

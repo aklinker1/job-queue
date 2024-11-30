@@ -10,6 +10,7 @@ import { exists } from "jsr:@std/fs@0.221";
 
 let cachedPage: string;
 
+/** Fetch function compatible with the WinterCG standards. */
 export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
 
 /**
