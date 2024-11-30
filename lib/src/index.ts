@@ -9,7 +9,7 @@ export * from "./persister.ts";
 export function createQueue<TQueue extends string = DefaultQueues>(
   options: JobQueueOptions<TQueue>,
 ): JobQueue<TQueue> {
-  const { persister, logger = DEFAULT_LOGGER } = options;
+  const { persister, logger = DEFAULT_LOGGER, concurrency = 20 } = options;
 
   // Prepare queues
   const queueOptionsMap = options.queues ?? DEFAULT_QUEUES;
@@ -34,7 +34,7 @@ export function createQueue<TQueue extends string = DefaultQueues>(
   // Init in-memory queue
   const queue = createParallelQueue({
     queue: createGroupQueue<QueueEntry>(queueOptionsMap, "queue"),
-    concurrency: options.workers,
+    concurrency,
     run: async (entry) => {
       if (options.debug) {
         logger.log(
@@ -137,13 +137,28 @@ export function createQueue<TQueue extends string = DefaultQueues>(
   };
 }
 
+/** Configure the job queue. */
 export interface JobQueueOptions<TQueues extends string> {
+  /** The `Persister` to use to persist and restore jobs when application is restarted. */
   persister: Persister;
-  workers?: number;
+  /**
+   * How many tasks can be performed at the same time. Note that tasks are performed on the same thread.
+   * @default 20
+   */
+  concurrency?: number;
+  /** Set to `true` to enable debug logs. */
   debug?: boolean;
+  /**
+   * Configure the queues tasks can be added to and their weights.
+   *
+   * A queue with a weight of 2 will be checked twice as often as a queue with a weight of 1:
+   *
+   * @default { default: 1 }
+   */
   queues?: {
     [queue in TQueues]: number;
   };
+  /** Custom logger to use when printing logs. */
   logger?: Logger;
 }
 
@@ -198,9 +213,6 @@ export interface Task<
 
 const DEFAULT_QUEUES = {
   default: 1,
-  critical: 1,
-  high: 1,
-  low: 1,
 } as const;
 type DefaultQueues = keyof typeof DEFAULT_QUEUES;
 

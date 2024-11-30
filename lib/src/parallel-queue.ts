@@ -1,8 +1,6 @@
-import { availableParallelism } from "node:os";
-
 export function createParallelQueue<T>({
   queue,
-  concurrency = availableParallelism(),
+  concurrency,
   run,
   onSuccess,
   onError,
@@ -13,7 +11,7 @@ export function createParallelQueue<T>({
     dequeue: () => T | undefined;
     size: () => number;
   };
-  concurrency?: number;
+  concurrency: number;
   run: (t: T) => void | Promise<void>;
   onSuccess: (t: T) => void | Promise<void>;
   onError: (t: T, err: unknown) => void | Promise<void>;
