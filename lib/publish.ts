@@ -28,7 +28,7 @@ const bumped = await bumpVersion();
 console.log();
 if (!dryRun) {
   console.log("Committing, pushing, creating release...");
-  $(`git commit -am "chore(release): ${bumped.nextVersion}`);
+  $(`git commit -am "chore(release): ${bumped.nextVersion}"`);
   $(`git tag "${bumped.nextTag}"`);
   $(`git push`);
   $(`git push --tags`);
@@ -62,7 +62,6 @@ async function bumpVersion() {
     process.cwd(),
     {
       from: `v${currentVersion}`,
-      to: getCurrentGitRef(),
       repo: {
         provider: "github",
         repo: "aklinker1/job-queue",
@@ -101,7 +100,10 @@ async function bumpVersion() {
   config.to = nextTag;
 
   console.log("Generating changelog...");
-  const changelog = await generateMarkDown(commits, config);
+  const changelog = (await generateMarkDown(commits, config))
+    // Remove extra header
+    .replace(`## ${config.from}...${config.to}\n\n`, "");
+
   console.log("Changelog:");
   console.log("┌" + "─".repeat(39));
   console.log("│ " + changelog.replaceAll("\n", "\n│ "));
