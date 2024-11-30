@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck: Database from bun:sqlite is not typed
 /**
  * Persist tasks using [`@db/sqlite`](https://jsr.io/@db/sqlite).
  * @module
@@ -18,7 +18,7 @@ import { stringifyError } from "../utils.ts";
  * Create a `Persister` backed by [`bun:sqlite`](https://bun.sh/docs/api/sqlite).
  * @see {Persister}
  */
-export async function createDenoSqlitePersister(
+export async function createBunSqlitePersister(
   file?: string,
 ): Promise<Persister> {
   // @ts-expect-error: External dependency not listed in deno.json
