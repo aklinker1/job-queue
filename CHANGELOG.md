@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.1.3
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.2...v0.1.3)
+
+### 🏡 Chore
+
+- Fix publish task ([85bab61](https://github.com/aklinker1/job-queue/commit/85bab61))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.1.2
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.1.1...v0.1.2)
