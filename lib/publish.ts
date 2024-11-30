@@ -3,7 +3,6 @@ import {
   createGithubRelease,
   determineSemverChange,
   generateMarkDown,
-  getCurrentGitRef,
   getGitDiff,
   loadChangelogConfig,
   parseChangelogMarkdown,
