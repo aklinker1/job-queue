@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.1
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.3.0...v0.3.1)
+
+### 🩹 Fixes
+
+- Rename `createDenoSqlitePersister` to `createBunSqlitePersister` ([a5cbc72](https://github.com/aklinker1/job-queue/commit/a5cbc72))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.3.0
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.2.4...v0.3.0)
