@@ -1,0 +1,10 @@
+{
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "workspace": ["./lib", "./ui"],
+  "imports": {},
+  "compilerOptions": {
+    "lib": ["deno.window", "dom"],
+    "jsx": "precompile",
+    "jsxImportSource": "solid-js"
+  }
+}
