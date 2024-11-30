@@ -69,12 +69,16 @@ async function bumpVersion() {
       output,
     },
   );
+  if (config.tokens.github == null) {
+    throw Error("GITHUB_TOKEN environment variable is required.");
+  }
+
   console.log(`Comparing ${config.from}..${config.to}`);
   const commits = parseCommits(
     await getGitDiff(config.from, config.to),
     config,
   );
-  let semverChange = determineSemverChange(commits, config);
+  let semverChange = determineSemverChange(commits, config) ?? "patch";
   if (currentVersion.startsWith("0.")) {
     if (semverChange === "major") semverChange = "minor";
     else if (semverChange === "minor") semverChange = "patch";
