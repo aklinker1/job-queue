@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.4.0
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.3.1...v0.4.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Extract database creation from persister ([97802cf](https://github.com/aklinker1/job-queue/commit/97802cf))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Extract database creation from persister ([97802cf](https://github.com/aklinker1/job-queue/commit/97802cf))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.3.1
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.3.0...v0.3.1)
