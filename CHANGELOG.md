@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.1
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.0...v0.4.1)
+
+### 📖 Documentation
+
+- Update README ([83e2584](https://github.com/aklinker1/job-queue/commit/83e2584))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.0
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.3.1...v0.4.0)
