@@ -158,6 +158,7 @@ export function createSqlitePersister(
   };
 }
 
+/** The generic interface the SQLite database must have to work with `@aklinker1/job-queue`. */
 export interface GenericSqliteDb {
   // deno-lint-ignore no-explicit-any
   exec(statement: string, ...args: any[]): unknown;
