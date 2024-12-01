@@ -3,7 +3,8 @@
 import { createServer, type PluginOption } from "vite";
 import { createQueue } from "@aklinker1/job-queue";
 import { createServer as createQueueServer } from "@aklinker1/job-queue/server";
-import { createDenoSqlitePersister } from "@aklinker1/job-queue/persisters/deno-sqlite";
+import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
+import { Database } from "jsr:@db/sqlite@^0.12.0";
 
 const server = await createServer({
   plugins: [JobServer()],
@@ -21,9 +22,10 @@ function JobServer(): PluginOption {
   const port = 3333;
   return {
     name: "dev",
-    async configureServer(server) {
+    configureServer(server) {
+      const db = new Database("../lib/data/queue.db", { int64: true });
       const queue = createQueue({
-        persister: await createDenoSqlitePersister("../lib/data/queue.db"),
+        persister: createSqlitePersister("../lib/data/queue.db"),
       });
       let jobServer: Deno.HttpServer | undefined;
       server.httpServer?.once("listening", () => {

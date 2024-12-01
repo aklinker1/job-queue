@@ -21,11 +21,13 @@ bunx jsr add @aklinker1/job-queue
 
 ```ts
 import { createQueue } from '@aklinker1/job-queue';
-import { createDenoSqlitePersister } from '@aklinker1/job-queue/persisters/deno-sqlite';
+import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
+import { Database } from '@db/sqlite';
 
 // 1. Create a queue
+const db = new Database("queue.db", { int64: true });
 const queue = createQueue({
-  persister: await createDenoSqlitePersister("queue.db"),
+  persister: await createSqlitePersister(db),
 })
 
 // 2. Define a task

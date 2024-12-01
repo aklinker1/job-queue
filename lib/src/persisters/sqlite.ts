@@ -1,9 +1,7 @@
-// @ts-nocheck: Database from bun:sqlite is not typed
 /**
  * Persist tasks using [`@db/sqlite`](https://jsr.io/@db/sqlite).
  * @module
  */
-import { dirname } from "node:path";
 import type {
   GetCountsResponse,
   Persister,
@@ -11,26 +9,22 @@ import type {
   QueueEntryInsert,
 } from "../persister.ts";
 import { QueueState } from "../persister.ts";
-import { mkdirSync } from "node:fs";
 import { stringifyError } from "../utils.ts";
 
 /**
- * Create a `Persister` backed by [`bun:sqlite`](https://bun.sh/docs/api/sqlite).
+ * Create a `Persister` backed by SQLite.
+ * @param db The SQLite database to operate on. Supports [Bun's `bun:sqlite`](https://bun.sh/docs/api/sqlite), [Deno's `@db/sqlite`](https://jsr.io/@db/sqlite), and [Node's `better-sqlite3`](https://www.npmjs.com/package/better-sqlite3).
  * @see {Persister}
  */
-export async function createBunSqlitePersister(
-  file?: string,
-): Promise<Persister> {
-  // @ts-expect-error: External dependency not listed in deno.json
-  const { Database } = await import("bun:sqlite");
-  const sqliteFile = file ?? "queue.db";
-  const sqliteDir = dirname(sqliteFile);
-  if (sqliteDir) mkdirSync(sqliteDir, { recursive: true });
-  const db = new Database(sqliteFile);
-
+export function createSqlitePersister(
+  _db: GenericSqliteDb,
+): Persister {
+  const db = _db as TypeSafeSqliteDb;
   // Migrations
   db.exec("CREATE TABLE IF NOT EXISTS migrations (id TEXT PRIMARY KEY);");
-  const getMigration = db.prepare("SELECT * FROM migrations WHERE id = ?;");
+  const getMigration = db.prepare<unknown, [id: string]>(
+    "SELECT * FROM migrations WHERE id = ?;",
+  );
   if (getMigration.get("0001-create-entries") == null) {
     db.exec(`
         CREATE TABLE entries (
@@ -78,19 +72,19 @@ export async function createBunSqlitePersister(
     RETURNING *
   `);
   const setProcessedStateStatement = db.prepare<
-    void,
+    unknown,
     [endedAt: number, id: number]
   >(
     `UPDATE entries SET endedAt = ?, state = ${QueueState.Processed} WHERE id = ?`,
   );
   const setFailedStateStatement = db.prepare<
-    void,
+    unknown,
     [endedAt: number, error: string, id: number]
   >(
     `UPDATE entries SET endedAt = ?, state = ${QueueState.Failed}, error = ? WHERE id = ?`,
   );
   const setDeadStateStatement = db.prepare<
-    void,
+    unknown,
     [endedAt: number, error: string, id: number]
   >(
     `UPDATE entries SET endedAt = ?, state = ${QueueState.Dead}, error = ? WHERE id = ?`,
@@ -161,5 +155,39 @@ export async function createBunSqlitePersister(
     getEnqueuedEntries,
     getFailedEntries,
     getDeadEntries,
+  };
+}
+
+export interface GenericSqliteDb {
+  // deno-lint-ignore no-explicit-any
+  exec(statement: string, ...args: any[]): unknown;
+  prepare(
+    statement: string,
+  ): {
+    // deno-lint-ignore no-explicit-any
+    get(...args: any[]): any;
+    // deno-lint-ignore no-explicit-any
+    all(...args: any[]): any[];
+    // deno-lint-ignore no-explicit-any
+    run(...args: any[]): void;
+  };
+}
+
+interface TypeSafeSqliteDb {
+  // deno-lint-ignore no-explicit-any
+  exec<TArgs extends any[] = []>(
+    statement: string,
+    ...args: TArgs
+  ): unknown;
+  prepare<
+    TReturn,
+    // deno-lint-ignore no-explicit-any
+    TArgs extends any[] = [],
+  >(
+    statement: string,
+  ): {
+    get(...args: TArgs): TReturn | undefined;
+    all(...args: TArgs): TReturn[];
+    run(...args: TArgs): void;
   };
 }

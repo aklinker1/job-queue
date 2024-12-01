@@ -1,9 +1,11 @@
 import { createQueue } from "./src/index.ts";
-import { createDenoSqlitePersister } from "./src/persisters/deno-sqlite.ts";
+import { createSqlitePersister } from "./src/persisters/sqlite.ts";
+import { Database } from "jsr:@db/sqlite@^0.12.0";
 import { delay } from "jsr:@std/async@^1.0.9";
 
+const db = new Database("data/queue.db", { int64: true });
 const queue = createQueue({
-  persister: await createDenoSqlitePersister("data/queue.db"),
+  persister: createSqlitePersister(db),
   concurrency: 2,
   debug: true,
 });

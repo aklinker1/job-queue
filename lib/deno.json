@@ -9,13 +9,10 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./persisters/deno-sqlite": "./src/persisters/deno-sqlite.ts",
-    "./persisters/bun-sqlite": "./src/persisters/bun-sqlite.ts",
+    "./persisters/sqlite": "./src/persisters/sqlite.ts",
     "./server": "./src/server.ts"
   },
   "imports": {
-    "@db/sqlite": "jsr:@db/sqlite@^0.12.0",
-    "@types/bun": "npm:@types/bun@^1.1.14",
     "p-queue": "npm:p-queue@^8.0.1",
     "serialize-error": "npm:serialize-error@^11.0.3",
     "yocto-queue": "npm:yocto-queue@^1.1.1"
