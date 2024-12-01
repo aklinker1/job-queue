@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.2
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.1...v0.4.2)
+
+### 📖 Documentation
+
+- Add missing JSDoc ([aee1a54](https://github.com/aklinker1/job-queue/commit/aee1a54))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.1
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.0...v0.4.1)
