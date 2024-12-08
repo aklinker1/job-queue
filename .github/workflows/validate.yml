@@ -15,8 +15,7 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
-      - name: Run deno check
-        run: deno check .
+      - run: deno check .
   tests:
     name: Tests
     runs-on: ubuntu-24.04
@@ -25,5 +24,9 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
-      - name: Run deno test
-        run: deno test
+      - run: deno test --coverage
+        working-directory: lib
+      - run: deno coverage
+        working-directory: lib
+      - run: deno coverage --detailed
+        working-directory: lib

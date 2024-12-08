@@ -1,9 +1,15 @@
-// deno-lint-ignore-file
-import { createGroupQueue } from "./group-queue.ts";
-import { createParallelQueue } from "./parallel-queue.ts";
-import type { Persister, QueueEntry, QueueEntryInsert } from "./persister.ts";
+// deno-lint-ignore-file no-explicit-any
+import { createWeightedParallelQueue } from "./queues/weighted-parallel-queue.ts";
+import { createConcurrentScheduler } from "./schedulers/concurrent-scheduler.ts";
+import type {
+  Persister,
+  QueueEntry,
+  QueueEntryInsert,
+} from "./persisters/persister.ts";
 
-export * from "./persister.ts";
+export * from "./persisters/persister.ts";
+export * from "./schedulers/scheduler.ts";
+export * from "./queues/queue.ts";
 
 /** Create a job queue. Tasks are defined on the queue once created using `queue.defineTask`. */
 export function createQueue<TQueue extends string = DefaultQueues>(
@@ -25,15 +31,14 @@ export function createQueue<TQueue extends string = DefaultQueues>(
   };
   const schedule = (entry: QueueEntry) => {
     if (entry.runAt == null) {
-      queue.enqueue(entry);
+      scheduler.add(entry);
     } else {
-      setTimeout(() => queue.enqueue(entry), entry.runAt - Date.now());
+      setTimeout(() => scheduler.add(entry), entry.runAt - Date.now());
     }
   };
 
-  // Init in-memory queue
-  const queue = createParallelQueue({
-    queue: createGroupQueue<QueueEntry>(queueOptionsMap, "queue"),
+  const scheduler = createConcurrentScheduler({
+    queue: createWeightedParallelQueue<QueueEntry>(queueOptionsMap, "queue"),
     concurrency,
     run: async (entry) => {
       if (options.debug) {

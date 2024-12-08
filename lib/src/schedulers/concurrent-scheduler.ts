@@ -1,4 +1,6 @@
-export function createParallelQueue<T>({
+import type { Scheduler } from "./scheduler.ts";
+
+export function createConcurrentScheduler<T>({
   queue,
   concurrency,
   run,
@@ -16,7 +18,7 @@ export function createParallelQueue<T>({
   onSuccess: (t: T) => void | Promise<void>;
   onError: (t: T, err: unknown) => void | Promise<void>;
   delay?: number;
-}) {
+}): Scheduler<T> {
   let running = 0;
 
   const runNextIfAvailable = () =>
@@ -42,8 +44,8 @@ export function createParallelQueue<T>({
     }, delay);
 
   return {
-    enqueue: (t: T) => {
-      queue.enqueue(t);
+    add: (item: T) => {
+      queue.enqueue(item);
       runNextIfAvailable();
     },
   };

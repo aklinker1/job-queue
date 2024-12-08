@@ -4,7 +4,9 @@
   "imports": {
     "@types/semver": "npm:@types/semver@^7.5.8",
     "changelogen": "npm:changelogen@^0.5.7",
-    "semver": "npm:semver@^7.6.3"
+    "semver": "npm:semver@^7.6.3",
+    "@std/testing": "jsr:@std/testing@^1.0.6",
+    "@std/expect": "jsr:@std/expect@^1.0.9"
   },
   "compilerOptions": {
     "lib": ["deno.window", "dom"],

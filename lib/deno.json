@@ -9,7 +9,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./persisters/sqlite": "./src/persisters/sqlite.ts",
+    "./persisters/sqlite": "./src/persisters/sqlite-persister.ts",
     "./server": "./src/server.ts"
   },
   "imports": {
