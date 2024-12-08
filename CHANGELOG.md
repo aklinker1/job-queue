@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.4.3
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.2...v0.4.3)
+
+### 📖 Documentation
+
+- Add missing JSDoc ([1176ae2](https://github.com/aklinker1/job-queue/commit/1176ae2))
+
+### 🏡 Chore
+
+- Fix failing checks ([9d98960](https://github.com/aklinker1/job-queue/commit/9d98960))
+- Write tests and rename internal APIs ([#1](https://github.com/aklinker1/job-queue/pull/1))
+
+### 🤖 CI
+
+- Add validation workflow ([13cedf1](https://github.com/aklinker1/job-queue/commit/13cedf1))
+- Fix runner versions ([4cf869c](https://github.com/aklinker1/job-queue/commit/4cf869c))
+- Add publish workflow ([5143360](https://github.com/aklinker1/job-queue/commit/5143360))
+- Convert publish workflow to `workflow_dispatch`, not `push` ([6801ef7](https://github.com/aklinker1/job-queue/commit/6801ef7))
+- Add authentication to publish workflow ([166ef21](https://github.com/aklinker1/job-queue/commit/166ef21))
+- Add git config ([b0c7bc0](https://github.com/aklinker1/job-queue/commit/b0c7bc0))
+- Fix permissions ([c27edfa](https://github.com/aklinker1/job-queue/commit/c27edfa))
+
+### ❤️ Contributors
+
+- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.2
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.1...v0.4.2)
