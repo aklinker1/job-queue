@@ -7,8 +7,8 @@ import type {
   Persister,
   QueueEntry,
   QueueEntryInsert,
-} from "../persister.ts";
-import { QueueState } from "../persister.ts";
+} from "./persister.ts";
+import { QueueState } from "./persister.ts";
 import { stringifyError } from "../utils.ts";
 
 /**

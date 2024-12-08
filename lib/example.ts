@@ -1,5 +1,5 @@
 import { createQueue } from "./src/index.ts";
-import { createSqlitePersister } from "./src/persisters/sqlite.ts";
+import { createSqlitePersister } from "./src/persisters/sqlite-persister.ts";
 import { Database } from "jsr:@db/sqlite@^0.12.0";
 import { delay } from "jsr:@std/async@^1.0.9";
 
