@@ -10,11 +10,11 @@ pnpm dlx jsr add @aklinker1/job-queue
 
 ## Features
 
-- 💽 Persistence
-- 🎛️ Multiple queues with adjustable weights
-- 🚧 Error handling and retries
-- 🦕 Supports Deno, Bun, and Node runtimes
-- 📈 Dashboard
+- 💾 Persistence
+- ⚖️ Multiple queues with adjustable weights and concurrency controls
+- 🔄 Error handling and retries
+- 🦕 Deno, Bun, and Node runtimes
+- 📊 Dashboard
 
 ![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
 
