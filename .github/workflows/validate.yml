@@ -1,0 +1,29 @@
+name: Validate
+on:
+  pull_request:
+  workflow_call:
+  push:
+    branches:
+      - main
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-20
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - name: Run deno check
+        run: deno check .
+  tests:
+    name: Tests
+    runs-on: ubuntu-20
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - name: Run deno test
+        run: deno test
