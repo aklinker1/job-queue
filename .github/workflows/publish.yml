@@ -1,0 +1,24 @@
+name: Publish
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  publish:
+    name: Publish
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - run: deno task publish
+        working-directory: lib
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
