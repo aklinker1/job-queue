@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.4
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.3...v0.4.4)
+
+### 📖 Documentation
+
+- Fix UI preview on jsr ([800d28e](https://github.com/aklinker1/job-queue/commit/800d28e))
+
+### ❤️ Contributors
+
+- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.3
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.2...v0.4.3)
