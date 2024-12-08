@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.4.5
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.4...v0.4.5)
+
+### 📖 Documentation
+
+- Update readme ([0cad56d](https://github.com/aklinker1/job-queue/commit/0cad56d))
+
+### 🏡 Chore
+
+- Update lockfile ([55e9d58](https://github.com/aklinker1/job-queue/commit/55e9d58))
+
+### 🤖 CI
+
+- Lock down runner version ([d66b804](https://github.com/aklinker1/job-queue/commit/d66b804))
+
+### ❤️ Contributors
+
+- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.4
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.3...v0.4.4)
