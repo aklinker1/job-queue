@@ -25,7 +25,6 @@
 
 ### ❤️ Contributors
 
-- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
 - Aaron ([@aklinker1](http://github.com/aklinker1))
 
 ## v0.4.2
