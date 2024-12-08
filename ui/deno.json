@@ -2,7 +2,6 @@
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "tasks": {
     "dev": "deno run -A --node-modules-dir --watch dev.ts",
-    "dev2": "deno run -A --node-modules-dir npm:vite",
     "build": "deno run -A --node-modules-dir npm:vite build"
   },
   "imports": {
@@ -15,6 +14,7 @@
     "unocss": "npm:unocss@^0.65.0-beta.2",
     "vite": "npm:vite@^6.0.1",
     "vite-plugin-singlefile": "npm:vite-plugin-singlefile@^2.0.3",
-    "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.0"
+    "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.0",
+    "virtual:uno.css": "npm:unocss@^0.65.0-beta.2"
   }
 }

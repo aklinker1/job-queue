@@ -18,6 +18,7 @@ export default (
     if (props.task.state === 3) return "red";
     return "black";
   };
+  console.log(props.task);
   return (
     <li class="ring-1 ring-black:20 rounded mb-2 flex flex-col lg:flex-row gap-2">
       <div class="p-4 lg:flex-1">
@@ -40,7 +41,9 @@ export default (
       </div>
       <Show when={props.task.error}>
         {(error) => (
-          <pre class="flex-1 text-sm px-4 py-3 bg-red:20 text-red overflow-x-auto">{error().stack ??JSON.stringify(error(), null, 2)}</pre>
+          <pre class="flex-1 text-sm px-4 py-3 bg-red:20 text-red overflow-x-auto">{
+            (error() as any).stack ??JSON.stringify(error(), null, 2)
+          }</pre>
         )}
       </Show>
       <div class="pr-4">

@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     UnoCSS(),
     Solid(),
+    // @ts-ignore: Vite version mismatches
     SingleFile(),
   ],
   build: {
