@@ -16,7 +16,7 @@ pnpm dlx jsr add @aklinker1/job-queue
 - 🦕 Supports Deno, Bun, and Node runtimes
 - 📈 Dashboard
 
-![UI Preview](https://github.com/aklinker1/job-queue/blob/unit-tests/.github/ui.png?raw=true)
+![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
 
 ## Usage
 
