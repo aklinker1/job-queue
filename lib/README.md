@@ -11,9 +11,10 @@ pnpm dlx jsr add @aklinker1/job-queue
 ## Features
 
 - 💾 Persistence
-- ⚖️ Multiple queues with adjustable weights and concurrency controls
+- ⚖️ Multiple queues with adjustable weights
+- 🎛️ TODO: Task-level concurrency controls
 - 🔄 Error handling and retries
-- 🦕 Deno, Bun, and Node runtimes
+- 🦕 Deno, Bun, and Node support
 - 📊 Dashboard
 
 ![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
@@ -30,7 +31,7 @@ import { Database } from '@db/sqlite';
 // 1. Create a queue
 const db = new Database("queue.db", { int64: true });
 const queue = createQueue({
-  persister: await createSqlitePersister(db),
+  persister: createSqlitePersister(db),
 })
 
 // 2. Define a task
