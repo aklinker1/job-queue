@@ -208,7 +208,7 @@ export interface TaskDefinition<
    */
   queue?: TQueueName;
   /**
-   * The number of times to retry before marking the task as `dead`. Set to `false` to nevewr retry a task
+   * The number of times to retry before marking the task as `dead`. Set to `false` to never retry a task.
    *
    * Defaults to the job queue's `retry` or 25 if not specified.
    */

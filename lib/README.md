@@ -86,25 +86,31 @@ const processPdf = queue.defineTask({
 
 ### Error Handling
 
-By default, a task is retried 25 times over 21 days with an exponential backoff, [same as Sidekiq](https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry) Once it has failed 25 times, it will be marked as "dead" and can be re-ran via the JS API or the Web UI.
+By default, a task is retried 25 times over 21 days with an exponential backoff, [same as Sidekiq](https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry). Once it has failed 25 times, it will be marked as "dead" and can be re-ran via the JS API or the Web UI.
 
-You can't customize the backoff behavior, but you can customize the max number of retires globally or per task.
+You can't customize the backoff behavior, but you can customize the max retry count globally or per task.
 
 ```ts
 const queue = createJobQueue({
   // ...
-  maxRetries: 5,
+  retry: 5,
 })
 
-// Will retry 5 times (total 6 runs)
+// Will retry 5 times (6 runs in total)
 const job1 = queue.defineTask({
- // ...
+  // ...
 })
 
-// Will retry 10 times (total 11 runs)
+// Will retry 10 times (11 runs in total)
 const job2 = queue.defineTask({
   // ...
-  maxRetries: 10
+  retry: 10,
+})
+
+// Never retry (only run once)
+const job2 = queue.defineTask({
+  // ...
+  retry: false,
 })
 ```
 
