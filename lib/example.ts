@@ -29,6 +29,7 @@ const loadEmailBodyTask = queue.defineTask({
 
     processEmailBodyTask.performAsync(emailAddress, id, body);
   },
+  retry: 1,
 });
 const processEmailBodyTask = queue.defineTask({
   name: "processEmailBody",
