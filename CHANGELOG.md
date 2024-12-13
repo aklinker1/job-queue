@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.5.0
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.5...v0.5.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Rename `createQueue` to `createJobQueue` ([#2](https://github.com/aklinker1/job-queue/pull/2))
+
+### 📖 Documentation
+
+- Update UI screenshot ([eb4b5e5](https://github.com/aklinker1/job-queue/commit/eb4b5e5))
+- Update README ([d293f39](https://github.com/aklinker1/job-queue/commit/d293f39))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Rename `createQueue` to `createJobQueue` ([#2](https://github.com/aklinker1/job-queue/pull/2))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.4.5
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.4...v0.4.5)
