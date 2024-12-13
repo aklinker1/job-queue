@@ -24,10 +24,10 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  *
  * @example
  * ```ts
- * import { createQueue } from '@aklinker1/job-queue';
+ * import { createJobQueue } from '@aklinker1/job-queue';
  * import { createServer } from '@aklinker1/job-queue/server';
  *
- * const queue = createQueue(...);
+ * const queue = createJobQueue(...);
  *
  * Deno.serve(
  *   createServer({
@@ -39,10 +39,10 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * @example
  * ```ts
  * import { Elysia } from 'elysia';
- * import { createQueue } from '@aklinker1/job-queue';
+ * import { createJobQueue } from '@aklinker1/job-queue';
  * import { createServer } from '@aklinker1/job-queue/server';
  *
- * const queue = createQueue(...);
+ * const queue = createJobQueue(...);
  *
  * new Elysia().mount(createServer({ queue }));
  * ```
