@@ -84,6 +84,36 @@ const processPdf = queue.defineTask({
 >
 > Basically, each task is guaranteed to ran **at least once**, but **not only once**, and you need to design your tasks around this behavior.
 
+### Error Handling
+
+By default, a task is retried 25 times over 21 days with an exponential backoff, [same as Sidekiq](https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry). Once it has failed 25 times, it will be marked as "dead" and can be re-ran via the JS API or the Web UI.
+
+You can't customize the backoff behavior, but you can customize the max retry count globally or per task.
+
+```ts
+const queue = createJobQueue({
+  // ...
+  retry: 5,
+})
+
+// Will retry 5 times (6 runs in total)
+const job1 = queue.defineTask({
+  // ...
+})
+
+// Will retry 10 times (11 runs in total)
+const job2 = queue.defineTask({
+  // ...
+  retry: 10,
+})
+
+// Never retry (only run once)
+const job2 = queue.defineTask({
+  // ...
+  retry: false,
+})
+```
+
 ### Add Dashboard to Web App
 
 See [`createServer` docs](https://jsr.io/@aklinker1/job-queue/doc/server/~/createServer).

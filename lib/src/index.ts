@@ -19,10 +19,14 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
 
   // Prepare queues
   const queueOptionsMap = options.queues ?? DEFAULT_QUEUES;
-  const defaultQueueName = Object.keys(queueOptionsMap)[0];
+  const defaultQueueName = Object.keys(queueOptionsMap)[0] as TQueue;
   if (defaultQueueName == null) {
     throw Error("You must define at least one queue.");
   }
+
+  const defaultRetry = options.retry ?? DEFAULT_RETRY;
+  const getTaskRetry = (def: TaskDefinition<any, any> | undefined) =>
+    def?.retry === false ? 0 : (def?.retry ?? defaultRetry);
 
   // Enqueuing
   const persistAndSchedule = (entry: QueueEntryInsert) => {
@@ -62,6 +66,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
       persister.setProcessedState(entry.id, Date.now());
     },
     onError: (entry, err) => {
+      const task = tasks[entry.name];
       if (options.debug) {
         logger.log(
           `\x1b[31mFailed\x1b[0m:  \x1b[2mid=\x1b[0m${entry.id}\x1b[0m \x1b[2merr=\x1b[0m${
@@ -70,14 +75,14 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
         );
       }
       const endedAt = Date.now();
-      if (entry.retries < 5) {
+      if (entry.retries < getTaskRetry(task)) {
         persister.setFailedState(entry.id, endedAt, err);
         persistAndSchedule({
           addedAt: endedAt,
           args: entry.args,
           name: entry.name,
           queue: entry.queue,
-          runAt: null,
+          runAt: endedAt + DEFAULT_BACKOFF_FORMULA(entry.retries),
           retries: entry.retries + 1,
         });
       } else {
@@ -94,12 +99,12 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
   }
 
   const defineTask: JobQueue<TQueue>["defineTask"] = (def) => {
-    const name = def.name;
-    const queue = (def.queue ?? defaultQueueName) as TQueue;
+    const { name, queue = defaultQueueName } = def;
 
     return {
       name,
       queue,
+      retry: getTaskRetry(def),
       performAsync: (...args) =>
         persistAndSchedule({
           name,
@@ -165,6 +170,11 @@ export interface JobQueueOptions<TQueues extends string> {
   };
   /** Custom logger to use when printing logs. */
   logger?: Logger;
+  /**
+   * Set the max number of retries for each task. Each task can override it's individual max retry count.
+   * @default 25
+   */
+  retry?: number;
 }
 
 /** Responsible for scheduling and running tasks as well as inspecting task state. */
@@ -197,6 +207,12 @@ export interface TaskDefinition<
    * @default "default"
    */
   queue?: TQueueName;
+  /**
+   * The number of times to retry before marking the task as `dead`. Set to `false` to never retry a task.
+   *
+   * Defaults to the job queue's `retry` or 25 if not specified.
+   */
+  retry?: number | false;
 }
 
 /** Task object used to add the task to the queue. */
@@ -208,6 +224,8 @@ export interface Task<
   name: string;
   /** The queue the task will run in, from it's definition. */
   queue: TQueueName;
+  /** The max number of reties before marking the task as `dead`. */
+  retry: number;
   /** Schedule the task to be ran as soon as possible. */
   performAsync(...args: Parameters<TPerform>): void;
   /** Schedule the task to run at a specific date. */
@@ -236,3 +254,12 @@ const DEFAULT_LOGGER: Logger = {
   warn: (...args) => console.warn(`\x1b[2m[job-queue]\x1b[0m`, ...args),
   error: (...args) => console.error(`\x1b[2m[job-queue]\x1b[0m`, ...args),
 };
+
+const DEFAULT_RETRY = 25;
+
+/**
+ * Same backoff formula used by Sidekiq: https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry
+ */
+const DEFAULT_BACKOFF_FORMULA = (retryCount: number): number =>
+  (Math.pow(retryCount, 4) + 15 +
+    (Math.random() * 10 * (retryCount + 1))) * 1e3;
