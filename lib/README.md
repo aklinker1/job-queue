@@ -24,13 +24,13 @@ pnpm dlx jsr add @aklinker1/job-queue
 ### Basic Usage
 
 ```ts
-import { createQueue } from '@aklinker1/job-queue';
+import { createJobQueue } from '@aklinker1/job-queue';
 import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
 import { Database } from '@db/sqlite';
 
 // 1. Create a queue
 const db = new Database("queue.db", { int64: true });
-const queue = createQueue({
+const queue = createJobQueue({
   persister: createSqlitePersister(db),
 })
 
@@ -99,7 +99,7 @@ You can use `@aklinker1/job-queue` in your runtime of choice. Just use any of th
 ### Deno Runtime
 
 ```ts
-import { createQueue } from '@aklinker1/job-queue';
+import { createJobQueue } from '@aklinker1/job-queue';
 import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
 import { Database } from '@db/sqlite';
 
@@ -108,7 +108,7 @@ const db = new Database("queue.db", {
   // which will overflow the int32 data type used by default
   int64: true,
 })
-const queue = createQueue({
+const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
 ```
@@ -116,12 +116,12 @@ const queue = createQueue({
 ### Bun Runtime
 
 ```ts
-import { createQueue } from '@aklinker1/job-queue';
+import { createJobQueue } from '@aklinker1/job-queue';
 import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
 import { Database } from 'bun:sqlite';
 
 const db = new Database("queue.db")
-const queue = createQueue({
+const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
 ```
@@ -129,12 +129,12 @@ const queue = createQueue({
 ### NodeJS Runtime
 
 ```ts
-import { createQueue } from '@aklinker1/job-queue';
+import { createJobQueue } from '@aklinker1/job-queue';
 import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
 import Database from 'better-sqlite3';
 
 const db = new Database("queue.db")
-const queue = createQueue({
+const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
 ```

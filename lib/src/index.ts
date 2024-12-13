@@ -12,7 +12,7 @@ export * from "./schedulers/scheduler.ts";
 export * from "./queues/queue.ts";
 
 /** Create a job queue. Tasks are defined on the queue once created using `queue.defineTask`. */
-export function createQueue<TQueue extends string = DefaultQueues>(
+export function createJobQueue<TQueue extends string = DefaultQueues>(
   options: JobQueueOptions<TQueue>,
 ): JobQueue<TQueue> {
   const { persister, logger = DEFAULT_LOGGER, concurrency = 20 } = options;
@@ -221,7 +221,7 @@ const DEFAULT_QUEUES = {
 } as const;
 type DefaultQueues = keyof typeof DEFAULT_QUEUES;
 
-/** Interface used by `createQueue` to print logs. */
+/** Interface used by `createJobQueue` to print logs. */
 export interface Logger {
   debug: (...args: any[]) => void;
   log: (...args: any[]) => void;

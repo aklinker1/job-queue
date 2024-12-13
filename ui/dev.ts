@@ -1,8 +1,8 @@
 // Have to use @aklinker1/job-queue inside a deno context, not inside vite config file.
 
 import { createServer } from "vite";
-import { createQueue } from "@aklinker1/job-queue";
-import { createServer as createQueueServer } from "@aklinker1/job-queue/server";
+import { createJobQueue } from "@aklinker1/job-queue";
+import { createServer as createJobQueueServer } from "@aklinker1/job-queue/server";
 import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
 import { Database } from "jsr:@db/sqlite@^0.12.0";
 import { mkdir } from "node:fs/promises";
@@ -26,14 +26,14 @@ function JobServer(): any {
     configureServer(server: any) {
       mkdir("../lib/data", { recursive: true });
       const db = new Database("../lib/data/queue.db", { int64: true });
-      const queue = createQueue({
+      const queue = createJobQueue({
         persister: createSqlitePersister(db),
       });
       let jobServer: Deno.HttpServer | undefined;
       server.httpServer?.once("listening", () => {
         jobServer = Deno.serve(
           { port },
-          createQueueServer({
+          createJobQueueServer({
             queue,
             title: "Job Server - Dev",
           }),
