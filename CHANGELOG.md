@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.6.1
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.0...v0.6.1)
+
+### 📖 Documentation
+
+- Add links at top of README ([f872ad0](https://github.com/aklinker1/job-queue/commit/f872ad0))
+- Change order of HTML handler ([915c099](https://github.com/aklinker1/job-queue/commit/915c099))
+- Remove periods ([27492ad](https://github.com/aklinker1/job-queue/commit/27492ad))
+- Update runtime headings ([8d5d115](https://github.com/aklinker1/job-queue/commit/8d5d115))
+- Add missing JSDoc for JobEntryNotFound ([a229b13](https://github.com/aklinker1/job-queue/commit/a229b13))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.0
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.5.0...v0.6.0)
