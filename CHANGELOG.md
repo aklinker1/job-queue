@@ -20,7 +20,6 @@
 ### ❤️ Contributors
 
 - Aaron ([@aklinker1](http://github.com/aklinker1))
-- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
 
 ## v0.4.5
 
@@ -40,7 +39,7 @@
 
 ### ❤️ Contributors
 
-- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+- Aaron ([@aklinker1](http://github.com/aklinker1))
 
 ## v0.4.4
 
@@ -52,7 +51,7 @@
 
 ### ❤️ Contributors
 
-- Aaron Klinker ([@aklinker1](http://github.com/aklinker1))
+- Aaron ([@aklinker1](http://github.com/aklinker1))
 
 ## v0.4.3
 
