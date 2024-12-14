@@ -4,11 +4,11 @@ export interface Persister {
   get(id: QueueEntry["id"]): QueueEntry | undefined;
   /** Insert a new job entry. */
   insert(entry: QueueEntryInsert): QueueEntry;
-  /** Update a entry's state to `Processed` */
+  /** Update a entry's state to {@link QueueState.Processed} */
   setProcessedState(id: QueueEntry["id"], endedAt: number): void;
-  /** Update a entry's state to `Failed` */
+  /** Update a entry's state to {@link QueueState.Failed} */
   setFailedState(id: QueueEntry["id"], endedAt: number, err: unknown): void;
-  /** Update a entry's state to `Dead` */
+  /** Update a entry's state to {@link QueueState.Dead} */
   setDeadState(id: QueueEntry["id"], endedAt: number, err: unknown): void;
   /** `getCounts` returns the number of enqueued, failed, and dead jobs. */
   getCounts(): GetCountsResponse;

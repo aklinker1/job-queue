@@ -28,15 +28,15 @@ export interface JobQueue<TQueueName extends string> extends
   ) => Job<TPerform, TQueueName>;
   /** Get a queue entry by it's ID. */
   getJob: (id: number) => QueueEntry | undefined;
-  /** Similar to `task.performAsync`, but it retries an existing job, running it ASAP. */
+  /** Similar to {@link Job#performAsync}, but it retries an existing job, running it ASAP. */
   retryAsync: (id: number) => QueueEntry;
-  /** Similar to `task.performAt`, but it retries an existing job, running it at a specific time. */
+  /** Similar to {@link Job#performAt}, but it retries an existing job, running it at a specific time. */
   retryAt: (id: number, date: Date) => QueueEntry;
-  /** Similar to `task.performIn`, but it retries an existing job, running it after a duration. */
+  /** Similar to {@link Job#performIn}, but it retries an existing job, running it after a duration. */
   retryIn: (id: number, msec: number) => QueueEntry;
 }
 
-/** Create a job queue. Jobs can be registered on the queue via `queue.defineJob`. */
+/** Create a job queue. Jobs can be registered on the queue via {@link JobQueue#defineJob}. */
 export function createJobQueue<TQueue extends string = DefaultQueues>(
   options: JobQueueOptions<TQueue>,
 ): JobQueue<TQueue> {
@@ -209,7 +209,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
 
 /** Configure the job queue. */
 export interface JobQueueOptions<TQueues extends string> {
-  /** The `Persister` to use to persist and restore jobs when application is restarted. */
+  /** The {@link Persister} to use to persist and restore jobs when application is restarted. */
   persister: Persister;
   /**
    * How many jobs can be performed at the same time. Note that jobs are performed on the same thread.
@@ -298,7 +298,7 @@ const DEFAULT_QUEUES = {
 } as const;
 type DefaultQueues = keyof typeof DEFAULT_QUEUES;
 
-/** Interface used by `createJobQueue` to print logs. */
+/** Interface used by {@link createJobQueue} to print logs. */
 export interface Logger {
   debug: (...args: any[]) => void;
   log: (...args: any[]) => void;
@@ -324,10 +324,7 @@ const DEFAULT_BACKOFF_FORMULA = (retryCount: number): number =>
     (Math.random() * 10 * (retryCount + 1))) * 1e3;
 
 /**
- * Error thrown by `JobQueue.retryAsync`, `JobQueue.retryAt`, and `JobQueue.retryIn` when the ID passed in is not found.
- * @see {JobQueue#retryAsync}
- * @see {JobQueue#retryAt}
- * @see {JobQueue#retryIn}
+ * Error thrown by {@link JobQueue#retryAsync}, {@link JobQueue#retryAt}, and {@link JobQueue#retryIn} when the ID passed in is not found.
  */
 export class JobEntryNotFound extends Error {
   constructor(id: QueueEntry["id"], options?: ErrorOptions) {
