@@ -128,7 +128,7 @@ You can use `@aklinker1/job-queue` in your runtime of choice. Just use any of th
 - Bun: `bun:sqlite`
 - Node: `better-sqlite3`
 
-### Deno Runtime
+### Deno
 
 ```ts
 import { createJobQueue } from '@aklinker1/job-queue';
@@ -145,7 +145,7 @@ const queue = createJobQueue({
 });
 ```
 
-### Bun Runtime
+### Bun
 
 ```ts
 import { createJobQueue } from '@aklinker1/job-queue';
@@ -158,7 +158,7 @@ const queue = createJobQueue({
 });
 ```
 
-### NodeJS Runtime
+### NodeJS
 
 ```ts
 import { createJobQueue } from '@aklinker1/job-queue';
