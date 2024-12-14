@@ -27,7 +27,7 @@ const bumped = await bumpVersion();
 console.log();
 if (!dryRun) {
   console.log("Committing, pushing, creating release...");
-  $(`git commit -am "chore(release): ${bumped.nextVersion}"`);
+  $(`git commit -am "chore(release): v${bumped.nextVersion}"`);
   $(`git tag "${bumped.nextTag}"`);
   $(`git push`);
   $(`git push --tags`);
