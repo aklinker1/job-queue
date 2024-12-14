@@ -6,12 +6,37 @@ import type {
   QueueEntry,
   QueueEntryInsert,
 } from "./persisters/persister.ts";
+import { omit } from "./utils.ts";
 
 export * from "./persisters/persister.ts";
 export * from "./schedulers/scheduler.ts";
 export * from "./queues/queue.ts";
 
-/** Create a job queue. Jobs are defined on the queue once created using `queue.defineJob`. */
+/** Responsible for scheduling and running jobs as well as inspecting job state. */
+export interface JobQueue<TQueueName extends string> extends
+  Pick<
+    Persister,
+    "getCounts" | "getEnqueuedEntries" | "getDeadEntries" | "getFailedEntries"
+  > {
+  /**
+   * Define a job on the queue.
+   *
+   * Jobs must be defined synchronously after creating the queue, otherwise restored jobs might not be defined by the time they're re-scheduled.
+   */
+  defineJob: <TPerform extends (...args: any[]) => void | Promise<void>>(
+    definition: JobDefinition<TPerform, TQueueName>,
+  ) => Job<TPerform, TQueueName>;
+  /** Get a queue entry by it's ID. */
+  getJob: (id: number) => QueueEntry | undefined;
+  /** Similar to `task.performAsync`, but it retries an existing job, running it ASAP. */
+  retryAsync: (id: number) => QueueEntry;
+  /** Similar to `task.performAt`, but it retries an existing job, running it at a specific time. */
+  retryAt: (id: number, date: Date) => QueueEntry;
+  /** Similar to `task.performIn`, but it retries an existing job, running it after a duration. */
+  retryIn: (id: number, msec: number) => QueueEntry;
+}
+
+/** Create a job queue. Jobs can be registered on the queue via `queue.defineJob`. */
 export function createJobQueue<TQueue extends string = DefaultQueues>(
   options: JobQueueOptions<TQueue>,
 ): JobQueue<TQueue> {
@@ -32,6 +57,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
   const persistAndSchedule = (entry: QueueEntryInsert) => {
     const inserted = persister.insert(entry);
     schedule(inserted);
+    return inserted;
   };
   const schedule = (entry: QueueEntry) => {
     if (entry.runAt == null) {
@@ -141,6 +167,39 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
       jobs[job.name] = def;
       return job;
     },
+    getJob: (id) => persister.get(id),
+    retryAsync: (id) => {
+      const entry = persister.get(id);
+      if (entry == null) throw new JobEntryNotFound(id);
+
+      return persistAndSchedule({
+        ...omit(entry, "id"),
+        addedAt: Date.now(),
+        runAt: null,
+      });
+    },
+    retryAt: (id, date) => {
+      const now = Date.now();
+      const entry = persister.get(id);
+      if (entry == null) throw new JobEntryNotFound(id);
+
+      return persistAndSchedule({
+        ...omit(entry, "id"),
+        addedAt: now,
+        runAt: date.getTime(),
+      });
+    },
+    retryIn: (id, msec) => {
+      const now = Date.now();
+      const entry = persister.get(id);
+      if (entry == null) throw new JobEntryNotFound(id);
+
+      return persistAndSchedule({
+        ...omit(entry, "id"),
+        addedAt: now,
+        runAt: now + msec,
+      });
+    },
     getCounts: () => persister.getCounts(),
     getEnqueuedEntries: () => persister.getEnqueuedEntries(),
     getFailedEntries: () => persister.getFailedEntries(),
@@ -178,22 +237,6 @@ export interface JobQueueOptions<TQueues extends string> {
   retry?: number;
 }
 
-/** Responsible for scheduling and running jobs as well as inspecting job state. */
-export interface JobQueue<TQueueName extends string> extends
-  Pick<
-    Persister,
-    "getCounts" | "getEnqueuedEntries" | "getDeadEntries" | "getFailedEntries"
-  > {
-  /**
-   * Define a job on the queue.
-   *
-   * Jobs must be defined synchronously after creating the queue, otherwise restored jobs might not be defined by the time they're re-scheduled.
-   */
-  defineJob: <TPerform extends (...args: any[]) => void | Promise<void>>(
-    definition: JobDefinition<TPerform, TQueueName>,
-  ) => Job<TPerform, TQueueName>;
-}
-
 /** Define what a job does and which queue it will run in. */
 export interface JobDefinition<
   TPerform extends (...args: any[]) => void | Promise<void>,
@@ -228,11 +271,14 @@ export interface Job<
   /** The max number of reties before marking the job as `dead`. */
   retry: number;
   /** Schedule the job to be ran as soon as possible. */
-  performAsync(...args: Parameters<TPerform>): void;
+  performAsync(...args: Parameters<TPerform>): QueueEntry;
   /** Schedule the job to run at a specific date. */
-  performAt(date: number | string | Date, ...args: Parameters<TPerform>): void;
+  performAt(
+    date: number | string | Date,
+    ...args: Parameters<TPerform>
+  ): QueueEntry;
   /** Schedule the job to run after a delay. */
-  performIn(msec: number, ...args: Parameters<TPerform>): void;
+  performIn(msec: number, ...args: Parameters<TPerform>): QueueEntry;
   /**
    * Returns a modified version of the same job, but it will be executed in a different queue.
    *
@@ -276,3 +322,10 @@ const DEFAULT_RETRY = 25;
 const DEFAULT_BACKOFF_FORMULA = (retryCount: number): number =>
   (Math.pow(retryCount, 4) + 15 +
     (Math.random() * 10 * (retryCount + 1))) * 1e3;
+
+export class JobEntryNotFound extends Error {
+  constructor(id: QueueEntry["id"], options?: ErrorOptions) {
+    super(`Job entry not found (id=${id})`, options);
+    this.name = "JobEntryNotFound";
+  }
+}
