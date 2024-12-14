@@ -6,7 +6,6 @@ import type {
   QueueEntry,
   QueueEntryInsert,
 } from "./persisters/persister.ts";
-import { omit } from "./utils.ts";
 
 export * from "./persisters/persister.ts";
 export * from "./schedulers/scheduler.ts";
@@ -159,6 +158,19 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
     };
   };
 
+  const getManualRetryEntry = (
+    now: number,
+    entry: QueueEntry,
+  ): QueueEntryInsert => {
+    return {
+      queue: entry.queue,
+      args: entry.args,
+      name: entry.name,
+      addedAt: now,
+      runAt: null,
+    };
+  };
+
   const jobs: Record<string, JobDefinition<any, any> | undefined> = {};
 
   return {
@@ -169,23 +181,21 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
     },
     getJob: (id) => persister.get(id),
     retryAsync: (id) => {
+      const now = Date.now();
       const entry = persister.get(id);
       if (entry == null) throw new JobEntryNotFound(id);
 
-      return persistAndSchedule({
-        ...omit(entry, "id"),
-        addedAt: Date.now(),
-        runAt: null,
-      });
+      persister.setRetriedState(id);
+      return persistAndSchedule(getManualRetryEntry(now, entry));
     },
     retryAt: (id, date) => {
       const now = Date.now();
       const entry = persister.get(id);
       if (entry == null) throw new JobEntryNotFound(id);
 
+      persister.setRetriedState(id);
       return persistAndSchedule({
-        ...omit(entry, "id"),
-        addedAt: now,
+        ...getManualRetryEntry(now, entry),
         runAt: date.getTime(),
       });
     },
@@ -194,9 +204,9 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
       const entry = persister.get(id);
       if (entry == null) throw new JobEntryNotFound(id);
 
+      persister.setRetriedState(id);
       return persistAndSchedule({
-        ...omit(entry, "id"),
-        addedAt: now,
+        ...getManualRetryEntry(now, entry),
         runAt: now + msec,
       });
     },

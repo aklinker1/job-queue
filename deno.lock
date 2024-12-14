@@ -30,6 +30,7 @@
     "npm:changelogen@0.5.7": "0.5.7",
     "npm:changelogen@~0.5.7": "0.5.7",
     "npm:dequal@2": "2.0.3",
+    "npm:nanoevents@^9.1.0": "9.1.0",
     "npm:p-queue@^8.0.1": "8.0.1",
     "npm:radix3@^1.1.2": "1.1.2",
     "npm:semver@^7.6.3": "7.6.3",
@@ -1437,6 +1438,9 @@
     "ms@2.1.3": {
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
     },
+    "nanoevents@9.1.0": {
+      "integrity": "sha512-Jd0fILWG44a9luj8v5kED4WI+zfkkgwKyRQKItTtlPfEsh7Lznfi1kr8/iZ+XAIss4Qq5GqRB0qtWbaz9ceO/A=="
+    },
     "nanoid@3.3.8": {
       "integrity": "sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w=="
     },
@@ -1860,6 +1864,8 @@
           "npm:@iconify-json/heroicons@^1.2.1",
           "npm:@solidjs/router@~0.15.1",
           "npm:@unocss/reset@~0.65.0-beta.2",
+          "npm:nanoevents@^9.1.0",
+          "npm:serialize-error@^11.0.3",
           "npm:solid-js@^1.9.3",
           "npm:unocss@~0.65.0-beta.2",
           "npm:vite-plugin-singlefile@^2.0.3",
