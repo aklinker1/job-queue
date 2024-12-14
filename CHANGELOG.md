@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.3
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.2...v0.6.3)
+
+### 📖 Documentation
+
+- Update JSDoc to use `@link` ([cd30e44](https://github.com/aklinker1/job-queue/commit/cd30e44))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.2
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.1...v0.6.2)
