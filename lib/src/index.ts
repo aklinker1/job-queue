@@ -323,6 +323,12 @@ const DEFAULT_BACKOFF_FORMULA = (retryCount: number): number =>
   (Math.pow(retryCount, 4) + 15 +
     (Math.random() * 10 * (retryCount + 1))) * 1e3;
 
+/**
+ * Error thrown by `JobQueue.retryAsync`, `JobQueue.retryAt`, and `JobQueue.retryIn` when the ID passed in is not found.
+ * @see {JobQueue#retryAsync}
+ * @see {JobQueue#retryAt}
+ * @see {JobQueue#retryIn}
+ */
 export class JobEntryNotFound extends Error {
   constructor(id: QueueEntry["id"], options?: ErrorOptions) {
     super(`Job entry not found (id=${id})`, options);
