@@ -47,6 +47,9 @@ export function createSqlitePersister(
     db.exec("INSERT INTO migrations (id) VALUES ('0001-create-entries')");
   }
 
+  const getStatement = db.prepare<QueueEntry, [id: QueueEntry["id"]]>(
+    `SELECT * FROM entries WHERE id = ?`,
+  );
   const getEnqueuedStatement = db.prepare<QueueEntry, []>(
     `SELECT * FROM entries WHERE state = ${QueueState.Enqueued} ORDER BY addedAt ASC`,
   );
@@ -108,6 +111,11 @@ export function createSqlitePersister(
     error: entry.error ? JSON.parse(entry.error) : null,
   });
 
+  const get: Persister["get"] = (id) => {
+    const entry = getStatement.get(id);
+    if (entry == null) return undefined;
+    return parseDbEntry(entry);
+  };
   const insert: Persister["insert"] = (entry) => {
     const res = insertStatement.get(
       entry.name,
@@ -147,6 +155,7 @@ export function createSqlitePersister(
     getDeadStatement.all().map(parseDbEntry);
 
   return {
+    get,
     insert,
     setProcessedState,
     setFailedState,

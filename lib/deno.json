@@ -14,6 +14,7 @@
   },
   "imports": {
     "p-queue": "npm:p-queue@^8.0.1",
+    "radix3": "npm:radix3@^1.1.2",
     "serialize-error": "npm:serialize-error@^11.0.3",
     "yocto-queue": "npm:yocto-queue@^1.1.1"
   },

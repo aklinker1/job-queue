@@ -1,5 +1,7 @@
 /** Interface used to persist and restore data when application is restarted. */
 export interface Persister {
+  /** Get a job entry by it's ID. */
+  get(id: QueueEntry["id"]): QueueEntry | undefined;
   /** Insert a new job entry. */
   insert(entry: QueueEntryInsert): QueueEntry;
   /** Update a entry's state to `Processed` */

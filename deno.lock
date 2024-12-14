@@ -31,6 +31,7 @@
     "npm:changelogen@~0.5.7": "0.5.7",
     "npm:dequal@2": "2.0.3",
     "npm:p-queue@^8.0.1": "8.0.1",
+    "npm:radix3@^1.1.2": "1.1.2",
     "npm:semver@^7.6.3": "7.6.3",
     "npm:serialize-error@^11.0.3": "11.0.3",
     "npm:solid-js@1": "1.9.3_seroval@1.1.1",
@@ -1547,6 +1548,9 @@
         "source-map-js"
       ]
     },
+    "radix3@1.1.2": {
+      "integrity": "sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA=="
+    },
     "rc9@2.1.2": {
       "integrity": "sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==",
       "dependencies": [
@@ -1844,6 +1848,7 @@
       "lib": {
         "dependencies": [
           "npm:p-queue@^8.0.1",
+          "npm:radix3@^1.1.2",
           "npm:serialize-error@^11.0.3",
           "npm:yocto-queue@^1.1.1"
         ]
