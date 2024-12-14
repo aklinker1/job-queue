@@ -1,9 +1,9 @@
-import TaskListPage from "../components/TaskListPage.tsx";
+import JobListPage from "../components/JobListPage.tsx";
 
 export default () => (
-  <TaskListPage
-    header="Dead Tasks"
-    endpoint="/api/tasks/dead"
+  <JobListPage
+    header="Dead Jobs"
+    endpoint="/api/jobs/dead"
     dateToShow="endedAt"
   />
 );

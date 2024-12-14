@@ -16,9 +16,9 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * Create a WinterCG compliant `fetch` function that adds the following endpoints to your server:
  *
  * - `GET {basePath}/api/counts`: Returns the result of `queue.getCounts`
- * - `GET {basePath}/api/tasks/enqueued`: Returns the result of `queue.getEnqueuedTasks`
- * - `GET {basePath}/api/tasks/failed`: Returns the result of `queue.getFailedTasks`
- * - `GET {basePath}/api/tasks/dead`: Returns the result of `queue.getDeadTasks`
+ * - `GET {basePath}/api/jobs/enqueued`: Returns the result of `queue.getEnqueuedJobs`
+ * - `GET {basePath}/api/jobs/failed`: Returns the result of `queue.getFailedJobs`
+ * - `GET {basePath}/api/jobs/dead`: Returns the result of `queue.getDeadJobs`
  *
  * Supports Elysia, Hono, Remix, Deno, Bun, etc.
  *
@@ -58,9 +58,9 @@ export const createServer = (options: CreateServerOptions): WinterCGFetch => {
     // deno-fmt-ignore
     if (req.method === "GET") {
       if (url.pathname === `${basePath}/api/counts`)         return Response.json(queue.getCounts());
-      if (url.pathname === `${basePath}/api/tasks/enqueued`) return Response.json(queue.getEnqueuedEntries());
-      if (url.pathname === `${basePath}/api/tasks/failed`)   return Response.json(queue.getFailedEntries());
-      if (url.pathname === `${basePath}/api/tasks/dead`)     return Response.json(queue.getDeadEntries());
+      if (url.pathname === `${basePath}/api/jobs/enqueued`) return Response.json(queue.getEnqueuedEntries());
+      if (url.pathname === `${basePath}/api/jobs/failed`)   return Response.json(queue.getFailedEntries());
+      if (url.pathname === `${basePath}/api/jobs/dead`)     return Response.json(queue.getDeadEntries());
     }
 
     // HTML page
@@ -94,7 +94,7 @@ export const createServer = (options: CreateServerOptions): WinterCGFetch => {
 
 /** Configure server behavior. */
 export interface CreateServerOptions {
-  /** The queue to get tasks and stats from. */
+  /** The queue to get jobs and stats from. */
   // deno-lint-ignore no-explicit-any
   queue: JobQueue<any>;
   /**

@@ -1,5 +1,5 @@
 /**
- * Persist tasks using [`@db/sqlite`](https://jsr.io/@db/sqlite).
+ * Persist jobs using [`@db/sqlite`](https://jsr.io/@db/sqlite).
  * @module
  */
 import type {

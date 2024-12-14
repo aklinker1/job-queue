@@ -1,5 +1,5 @@
 import { createResource } from "solid-js";
-import TaskList from "../components/TaskList.tsx";
+import JobList from "../components/JobList.tsx";
 import type { QueueEntry } from "@aklinker1/job-queue";
 
 export default (
@@ -9,7 +9,7 @@ export default (
     dateToShow: "addedAt" | "endedAt";
   },
 ) => {
-  const [tasks, { refetch }] = createResource<QueueEntry[]>(() =>
+  const [jobs, { refetch }] = createResource<QueueEntry[]>(() =>
     fetch(__BASE_PATH__ + props.endpoint).then((res) => res.json())
   );
   return (
@@ -20,7 +20,7 @@ export default (
           R
         </button>
       </div>
-      <TaskList tasks={tasks()} dateToShow={props.dateToShow} />
+      <JobList jobs={jobs()} dateToShow={props.dateToShow} />
     </div>
   );
 };
