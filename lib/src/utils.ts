@@ -8,9 +8,3 @@ export function stringifyError(err: unknown): string {
     "",
   ).replaceAll("file://", "");
 }
-
-export function omit<T, TKey extends keyof T>(t: T, key: TKey): Omit<T, TKey> {
-  const newT = { ...t };
-  delete newT[key];
-  return newT;
-}

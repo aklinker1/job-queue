@@ -3,8 +3,6 @@ export default (props: { class?: string }) => (
   <svg
     class={props.class}
     xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
     viewBox="0 0 24 24"
   >
     <g fill="currentColor">

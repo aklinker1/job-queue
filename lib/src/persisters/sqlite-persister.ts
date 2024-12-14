@@ -80,6 +80,12 @@ export function createSqlitePersister(
   >(
     `UPDATE entries SET endedAt = ?, state = ${QueueState.Processed} WHERE id = ?`,
   );
+  const setRetriedStateStatement = db.prepare<
+    unknown,
+    [id: number]
+  >(
+    `UPDATE entries SET state = ${QueueState.Retried} WHERE id = ?`,
+  );
   const setFailedStateStatement = db.prepare<
     unknown,
     [endedAt: number, error: string, id: number]
@@ -139,6 +145,9 @@ export function createSqlitePersister(
   const setDeadState: Persister["setDeadState"] = (id, endedAt, err) => {
     setDeadStateStatement.run(endedAt, stringifyError(err), id);
   };
+  const setRetriedState: Persister["setRetriedState"] = (id) => {
+    setRetriedStateStatement.run(id);
+  };
   const getCounts: Persister["getCounts"] = () => {
     const res = getCountsStatement.get()!;
     return {
@@ -160,6 +169,7 @@ export function createSqlitePersister(
     setProcessedState,
     setFailedState,
     setDeadState,
+    setRetriedState,
     getCounts,
     getEnqueuedEntries,
     getFailedEntries,

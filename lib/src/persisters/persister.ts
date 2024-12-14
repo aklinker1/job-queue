@@ -4,6 +4,8 @@ export interface Persister {
   get(id: QueueEntry["id"]): QueueEntry | undefined;
   /** Insert a new job entry. */
   insert(entry: QueueEntryInsert): QueueEntry;
+  /** Update a entry's state to {@link QueueState.Retried} */
+  setRetriedState(id: QueueEntry["id"]): void;
   /** Update a entry's state to {@link QueueState.Processed} */
   setProcessedState(id: QueueEntry["id"], endedAt: number): void;
   /** Update a entry's state to {@link QueueState.Failed} */
@@ -50,6 +52,8 @@ export enum QueueState {
   Failed = 2,
   /** The job failed enough times that it won't be retried again. */
   Dead = 3,
+  /** A dead job that has been retried manually. */
+  Retried = 4,
 }
 
 /** Contains the number of jobs with specific states. */
