@@ -17,7 +17,6 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
 /**
  * Create a WinterCG compliant `fetch` function that adds the following endpoints to your server:
  *
- * - `GET {basePath}`: Returns the web UI's HTML page
  * - `GET {basePath}/api/counts`: Returns the result of `queue.getCounts`
  * - `GET {basePath}/api/jobs/enqueued`: Returns the result of `queue.getEnqueuedJobs`
  * - `GET {basePath}/api/jobs/failed`: Returns the result of `queue.getFailedJobs`
@@ -26,6 +25,7 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * - `POST {basePath}/api/jobs/:id/retry-async`: Executes and returns the result of `queue.retryAsync`.
  * - `POST {basePath}/api/jobs/:id/retry-at?date=2024-12-14T00:57:44.264Z`: Executes and returns the result of `queue.retryAt`.
  * - `POST {basePath}/api/jobs/:id/retry-in?msec=5000`: Executes and returns the result of `queue.retryIn`.
+ * - `GET {basePath}/**`: Returns the web UI's HTML page
  *
  * Supports Elysia, Hono, Remix, Deno, Bun, etc.
  *
