@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.6.0
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.5.0...v0.6.0)
+
+### 🚀 Enhancements
+
+- ⚠️  `retry` count option and default backoff ([#3](https://github.com/aklinker1/job-queue/pull/3))
+- `job.in` to change the queue a job runs in ([#5](https://github.com/aklinker1/job-queue/pull/5))
+- `job.in` for adhoc queue changes ([#6](https://github.com/aklinker1/job-queue/pull/6))
+- Retry APIs and server endpoints ([#7](https://github.com/aklinker1/job-queue/pull/7))
+
+### 🩹 Fixes
+
+- ⚠️  Rename "task" to "job" ([#4](https://github.com/aklinker1/job-queue/pull/4))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  `retry` count option and default backoff ([#3](https://github.com/aklinker1/job-queue/pull/3))
+- ⚠️  Rename "task" to "job" ([#4](https://github.com/aklinker1/job-queue/pull/4))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.5.0
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.4.5...v0.5.0)
