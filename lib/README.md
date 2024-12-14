@@ -35,7 +35,7 @@ const queue = createJobQueue({
 })
 
 // 2. Define a job
-const processDocument = queue.defineJob({
+const processDocumentJob = queue.defineJob({
   name: "processDocument",
   perform: (file: string) => {
     // ...
@@ -43,9 +43,9 @@ const processDocument = queue.defineJob({
 })
 
 // 3. Run the job
-processDocument.performAsync("/path/to/file.pdf");
-processDocument.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
-processDocument.performIn(30e3, "/path/to/file.pdf");
+processDocumentJob.performAsync("/path/to/file.pdf");
+processDocumentJob.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
+processDocumentJob.performIn(30e3, "/path/to/file.pdf");
 ```
 
 ### Jobs
@@ -108,7 +108,7 @@ const job2 = queue.defineJob({
 })
 
 // Never retry (only run once)
-const job2 = queue.defineJob({
+const job3 = queue.defineJob({
   // ...
   retry: false,
 })

@@ -18,7 +18,6 @@ export default (
     if (props.job.state === 3) return "red";
     return "black";
   };
-  console.log(props.job);
   return (
     <li class="ring-1 ring-black:20 rounded mb-2 flex flex-col lg:flex-row gap-2">
       <div class="p-4 lg:flex-1">
