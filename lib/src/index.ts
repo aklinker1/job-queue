@@ -129,6 +129,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
           addedAt: Date.now(),
           runAt: Date.now() + msec,
         }),
+      in: (queue) => defineJob({ ...def, queue }),
     };
   };
 
@@ -232,6 +233,18 @@ export interface Job<
   performAt(date: number | string | Date, ...args: Parameters<TPerform>): void;
   /** Schedule the job to run after a delay. */
   performIn(msec: number, ...args: Parameters<TPerform>): void;
+  /**
+   * Returns a modified version of the same job, but it will be executed in a different queue.
+   *
+   * @example
+   * ```ts
+   * const job = queue.defineJob({
+   *   queue: "low-priority"
+   * });
+   * job.in("high-priority").performAsync(...);
+   * ```
+   */
+  in(queue: TQueueName): Job<TPerform, TQueueName>;
 }
 
 const DEFAULT_QUEUES = {
