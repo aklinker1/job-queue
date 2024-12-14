@@ -28,7 +28,7 @@ describe("Concurrent Scheduler", () => {
     expect(run).toBeCalledWith(item);
   });
 
-  it("should only run the specified number of tasks at one time", async () => {
+  it("should only run the specified number of jobs at one time", async () => {
     const run = fn() as any;
     const scheduler = createConcurrentScheduler<{ id: number }>({
       queue: createBasicQueue(),
@@ -55,7 +55,7 @@ describe("Concurrent Scheduler", () => {
     expect(run).toHaveBeenNthCalledWith(3, items[2]);
   });
 
-  it("should call `onSuccess` when the task has ran", async () => {
+  it("should call `onSuccess` when the job has ran", async () => {
     const run = fn() as any;
     const onSuccess = fn() as any;
     const scheduler = createConcurrentScheduler<{ id: number }>({

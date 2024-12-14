@@ -1,9 +1,9 @@
-import TaskListPage from "../components/TaskListPage.tsx";
+import JobListPage from "../components/JobListPage.tsx";
 
 export default () => (
-  <TaskListPage
-    header="Enqueued Tasks"
-    endpoint="/api/tasks/enqueued"
+  <JobListPage
+    header="Enqueued Jobs"
+    endpoint="/api/jobs/enqueued"
     dateToShow="addedAt"
   />
 );

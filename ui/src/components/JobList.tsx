@@ -1,22 +1,22 @@
 import type { QueueEntry } from "@aklinker1/job-queue";
 import { For } from "solid-js";
-import TaskListItem from "./TaskListItem.tsx";
+import JobListItem from "./JobListItem.tsx";
 
 export default (
   props: {
-    tasks: QueueEntry[] | undefined;
+    jobs: QueueEntry[] | undefined;
     dateToShow: "addedAt" | "endedAt";
   },
 ) => {
   return (
     <ul>
       <For
-        each={props.tasks}
-        fallback={<p class="text-center py-32">No tasks</p>}
+        each={props.jobs}
+        fallback={<p class="text-center py-32">No jobs</p>}
       >
-        {(task) => (
-          <TaskListItem
-            task={task}
+        {(job) => (
+          <JobListItem
+            job={job}
             dateToShow={props.dateToShow}
           />
         )}

@@ -12,7 +12,7 @@ pnpm dlx jsr add @aklinker1/job-queue
 
 - 💾 Persistence
 - ⚖️ Multiple queues with adjustable weights
-- 🎛️ TODO: Task-level concurrency controls
+- 🎛️ TODO: Job-level concurrency controls
 - 🔄 Error handling and retries
 - 🦕 Deno, Bun, and Node support
 - 📊 Dashboard
@@ -34,28 +34,28 @@ const queue = createJobQueue({
   persister: createSqlitePersister(db),
 })
 
-// 2. Define a task
-const processDocument = queue.defineTask({
+// 2. Define a job
+const processDocumentJob = queue.defineJob({
   name: "processDocument",
   perform: (file: string) => {
     // ...
   }
 })
 
-// 3. Run the task
-processDocument.performAsync("/path/to/file.pdf");
-processDocument.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
-processDocument.performIn(30e3, "/path/to/file.pdf");
+// 3. Run the job
+processDocumentJob.performAsync("/path/to/file.pdf");
+processDocumentJob.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
+processDocumentJob.performIn(30e3, "/path/to/file.pdf");
 ```
 
-### Tasks
+### Jobs
 
-Use `queue.defineTask` to create as many tasks as you need. Tasks can be chained together:
+Use `queue.defineJob` to create as many jobs as you need. Jobs can be chained together:
 
 ```ts
 import { walk, type WalkEntry } from '@std/fs';
 
-const processDirectory = queue.defineTask({
+const processDirectory = queue.defineJob({
   name: "processDirectory",
   perform: async (dir: string) => {
     const entries = await walk(dir, {
@@ -68,7 +68,7 @@ const processDirectory = queue.defineTask({
   }
 })
 
-const processPdf = queue.defineTask({
+const processPdf = queue.defineJob({
   name: "processPdf",
   perform: async (entry: WalkEntry) => {
     // Do something with the PDF
@@ -77,18 +77,18 @@ const processPdf = queue.defineTask({
 ```
 
 > [!NOTE]
-> Task arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
+> Job arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
 
 > [!WARNING]
-> Tasks must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, restart, etc), tasks will likely be interrupted half-way through, and they must be designed to be re-ran safely. Similarly, if the task throws an error, it will be re-run at a later point.
+> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, restart, etc), jobs will likely be interrupted half-way through, and they must be designed to be re-ran safely. Similarly, if the job throws an error, it will be re-run at a later point.
 >
-> Basically, each task is guaranteed to ran **at least once**, but **not only once**, and you need to design your tasks around this behavior.
+> Basically, each job is guaranteed to ran **at least once**, but **not only once**, and you need to design your jobs around this behavior.
 
 ### Error Handling
 
-By default, a task is retried 25 times over 21 days with an exponential backoff, [same as Sidekiq](https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry). Once it has failed 25 times, it will be marked as "dead" and can be re-ran via the JS API or the Web UI.
+By default, a job is retried 25 times over 21 days with an exponential backoff, [same as Sidekiq](https://github.com/sidekiq/sidekiq/wiki/Error-Handling#automatic-job-retry). Once it has failed 25 times, it will be marked as "dead" and can be re-ran via the JS API or the Web UI.
 
-You can't customize the backoff behavior, but you can customize the max retry count globally or per task.
+You can't customize the backoff behavior, but you can customize the max retry count globally or per job.
 
 ```ts
 const queue = createJobQueue({
@@ -97,18 +97,18 @@ const queue = createJobQueue({
 })
 
 // Will retry 5 times (6 runs in total)
-const job1 = queue.defineTask({
+const job1 = queue.defineJob({
   // ...
 })
 
 // Will retry 10 times (11 runs in total)
-const job2 = queue.defineTask({
+const job2 = queue.defineJob({
   // ...
   retry: 10,
 })
 
 // Never retry (only run once)
-const job2 = queue.defineTask({
+const job3 = queue.defineJob({
   // ...
   retry: false,
 })

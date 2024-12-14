@@ -10,28 +10,28 @@ const queue = createJobQueue({
   debug: true,
 });
 
-const backfillEmailsTask = queue.defineTask({
+const backfillEmailsJob = queue.defineJob({
   name: "backfillEmails",
   async perform(emailAddress: string) {
     const emails = [1, 2, 3];
     await delay(100);
     emails.forEach(
-      (id) => void loadEmailBodyTask.performAsync(emailAddress, id),
+      (id) => void loadEmailBodyJob.performAsync(emailAddress, id),
     );
   },
 });
-const loadEmailBodyTask = queue.defineTask({
+const loadEmailBodyJob = queue.defineJob({
   name: "loadEmailBody",
   async perform(emailAddress: string, id: number) {
     const body = "hello world";
     await delay(200);
     if (id == 3) throw Error("Not found: id = " + id);
 
-    processEmailBodyTask.performAsync(emailAddress, id, body);
+    processEmailBodyJob.performAsync(emailAddress, id, body);
   },
   retry: 1,
 });
-const processEmailBodyTask = queue.defineTask({
+const processEmailBodyJob = queue.defineJob({
   name: "processEmailBody",
   async perform(emailAddress: string, id: number, body: string) {
     await delay(300);
@@ -39,4 +39,4 @@ const processEmailBodyTask = queue.defineTask({
   },
 });
 
-backfillEmailsTask.performAsync("aaronklinker1@gmail.com");
+backfillEmailsJob.performAsync("aaronklinker1@gmail.com");
