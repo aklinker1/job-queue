@@ -29,6 +29,8 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  *
  * Supports Elysia, Hono, Remix, Deno, Bun, etc.
  *
+ * ![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
+ *
  * @example
  * ```ts
  * import { createJobQueue } from '@aklinker1/job-queue';

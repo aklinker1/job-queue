@@ -13,40 +13,41 @@ pnpm dlx jsr add @aklinker1/job-queue
 ## Features
 
 - 💾 Persistence
-- ⚖️ Multiple queues with adjustable weights
-- 🎛️ TODO: Job-level concurrency controls
+- 🎛️ Multiple queues with adjustable weights
 - 🔄 Error handling and retries
 - 🦕 Deno, Bun, and Node support
-- 📊 Dashboard
-
-![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
+- 🖥️ Web UI
+  ![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
 
 ## Usage
 
 ### Basic Usage
 
 ```ts
-import { createJobQueue } from '@aklinker1/job-queue';
-import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
-import { Database } from '@db/sqlite';
+import { createJobQueue } from "@aklinker1/job-queue";
+import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
+import { Database } from "@db/sqlite";
 
 // 1. Create a queue
 const db = new Database("queue.db", { int64: true });
 const queue = createJobQueue({
   persister: createSqlitePersister(db),
-})
+});
 
 // 2. Define a job
 const processDocumentJob = queue.defineJob({
   name: "processDocument",
   perform: (file: string) => {
     // ...
-  }
-})
+  },
+});
 
 // 3. Run the job
 processDocumentJob.performAsync("/path/to/file.pdf");
-processDocumentJob.performAt(new Date("2025-04-26 3:24:31"), "/path/to/file.pdf");
+processDocumentJob.performAt(
+  new Date("2025-04-26 3:24:31"),
+  "/path/to/file.pdf",
+);
 processDocumentJob.performIn(30e3, "/path/to/file.pdf");
 ```
 
@@ -55,7 +56,7 @@ processDocumentJob.performIn(30e3, "/path/to/file.pdf");
 Use `queue.defineJob` to create as many jobs as you need. Jobs can be chained together:
 
 ```ts
-import { walk, type WalkEntry } from '@std/fs';
+import { walk, type WalkEntry } from "@std/fs";
 
 const processDirectory = queue.defineJob({
   name: "processDirectory",
@@ -64,18 +65,18 @@ const processDirectory = queue.defineJob({
       exts: [".pdf"],
     });
 
-    entries.forEach(entry => {
-      processPdf.performAsync(entry)
-    })
-  }
-})
+    entries.forEach((entry) => {
+      processPdf.performAsync(entry);
+    });
+  },
+});
 
 const processPdf = queue.defineJob({
   name: "processPdf",
   perform: async (entry: WalkEntry) => {
     // Do something with the PDF
-  }
-})
+  },
+});
 ```
 
 > [!NOTE]
@@ -96,27 +97,44 @@ You can't customize the backoff behavior, but you can customize the max retry co
 const queue = createJobQueue({
   // ...
   retry: 5,
-})
+});
 
 // Will retry 5 times (6 runs in total)
 const job1 = queue.defineJob({
   // ...
-})
+});
 
 // Will retry 10 times (11 runs in total)
 const job2 = queue.defineJob({
   // ...
   retry: 10,
-})
+});
 
 // Never retry (only run once)
 const job3 = queue.defineJob({
   // ...
   retry: false,
-})
+});
+```
+
+### Cron Jobs/Scheduling
+
+This library does not provide any APIs for scheduling or running tasks on an interval. Instead, use an existing library like `croner` (available on both [NPM](https://www.npmjs.com/package/croner) and [JSR](https://jsr.io/@hexagon/croner)) to schedule tasks:
+
+```ts
+import { Cron } from "croner";
+
+const exampleJob = queue.defineJob({
+  // ...
+});
+
+// Schedule to run every day at midnight
+new Cron("@daily", () => exampleJob.performAsync());
 ```
 
 ### Add Dashboard to Web App
+
+![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
 
 See [`createServer` docs](https://jsr.io/@aklinker1/job-queue/doc/server/~/createServer).
 
@@ -131,15 +149,15 @@ You can use `@aklinker1/job-queue` in your runtime of choice. Just use any of th
 ### Deno
 
 ```ts
-import { createJobQueue } from '@aklinker1/job-queue';
-import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
-import { Database } from '@db/sqlite';
+import { createJobQueue } from "@aklinker1/job-queue";
+import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
+import { Database } from "@db/sqlite";
 
 const db = new Database("queue.db", {
   // Required - @aklinker1/job-queue uses integer columns to store timestamps,
   // which will overflow the int32 data type used by default
   int64: true,
-})
+});
 const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
@@ -148,11 +166,11 @@ const queue = createJobQueue({
 ### Bun
 
 ```ts
-import { createJobQueue } from '@aklinker1/job-queue';
-import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
-import { Database } from 'bun:sqlite';
+import { createJobQueue } from "@aklinker1/job-queue";
+import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
+import { Database } from "bun:sqlite";
 
-const db = new Database("queue.db")
+const db = new Database("queue.db");
 const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
@@ -161,11 +179,11 @@ const queue = createJobQueue({
 ### NodeJS
 
 ```ts
-import { createJobQueue } from '@aklinker1/job-queue';
-import { createSqlitePersister } from '@aklinker1/job-queue/persisters/sqlite';
-import Database from 'better-sqlite3';
+import { createJobQueue } from "@aklinker1/job-queue";
+import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
+import Database from "better-sqlite3";
 
-const db = new Database("queue.db")
+const db = new Database("queue.db");
 const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
