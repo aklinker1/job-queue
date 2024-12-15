@@ -119,6 +119,7 @@ export const createServer = (options: CreateServerOptions): WinterCGFetch => {
         return new Response(cachedPage, {
           headers: {
             "Content-Type": "text/html",
+            "Content-Encoding": "gzip",
           },
         });
       });
@@ -148,11 +149,9 @@ async function findPublicIndexHtmlPath(): Promise<string | undefined> {
   let dir = dirname(fileURLToPath(import.meta.resolve("@aklinker1/job-queue")));
   let file;
   do {
-    file = join(dir, "public/index.html");
+    file = join(dir, "public/index.html.gz");
     dir = dirname(dir);
-    if (await exists(file)) {
-      return file;
-    }
+    if (await exists(file)) return file;
   } while (dir.length > 9);
 
   return undefined;

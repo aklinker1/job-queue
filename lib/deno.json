@@ -19,6 +19,7 @@
     "yocto-queue": "npm:yocto-queue@^1.1.1"
   },
   "publish": {
-    "include": ["src", "public", "README.md"]
+    "include": ["src", "public/index.html.gz", "README.md"],
+    "exclude": ["**/__tests__/**"]
   }
 }

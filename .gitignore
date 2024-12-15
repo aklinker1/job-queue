@@ -4,3 +4,4 @@ node_modules
 lib/public
 .DS_Store
 coverage
+stats.html
