@@ -4,12 +4,6 @@
 
 Lightweight single process job queue.
 
-```sh
-deno add jsr:@aklinker1/job-queue
-bunx jsr add @aklinker1/job-queue
-pnpm dlx jsr add @aklinker1/job-queue
-```
-
 ## Features
 
 - 💾 Persistence
