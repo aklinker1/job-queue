@@ -11,7 +11,6 @@ Lightweight single process job queue.
 - 🔄 Error handling and retries
 - 🦕 Deno, Bun, and Node support
 - 🖥️ Web UI
-  ![UI Preview](https://raw.githubusercontent.com/aklinker1/job-queue/refs/heads/main/.github/ui.png)
 
 ## Usage
 
@@ -22,13 +21,15 @@ import { createJobQueue } from "@aklinker1/job-queue";
 import { createSqlitePersister } from "@aklinker1/job-queue/persisters/sqlite";
 import { Database } from "@db/sqlite";
 
-// 1. Create a queue
+// 1. Open database
 const db = new Database("queue.db", { int64: true });
+
+// 2. Create a queue
 const queue = createJobQueue({
   persister: createSqlitePersister(db),
 });
 
-// 2. Define a job
+// 3. Define a job
 const processDocumentJob = queue.defineJob({
   name: "processDocument",
   perform: (file: string) => {
@@ -36,13 +37,8 @@ const processDocumentJob = queue.defineJob({
   },
 });
 
-// 3. Run the job
+// 4. Run the job
 processDocumentJob.performAsync("/path/to/file.pdf");
-processDocumentJob.performAt(
-  new Date("2025-04-26 3:24:31"),
-  "/path/to/file.pdf",
-);
-processDocumentJob.performIn(30e3, "/path/to/file.pdf");
 ```
 
 ### Jobs
@@ -77,9 +73,17 @@ const processPdf = queue.defineJob({
 > Job arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
 
 > [!WARNING]
-> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, restart, etc), jobs will likely be interrupted half-way through, and they must be designed to be re-ran safely. Similarly, if the job throws an error, it will be re-run at a later point.
+> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, the app restarts, or from failire), jobs will be interrupted half-way through and they must be designed to be re-ran safely. 
 >
 > Basically, each job is guaranteed to ran **at least once**, but **not only once**, and you need to design your jobs around this behavior.
+
+### Performing Jobs
+
+There are three ways to schedule a job to run:
+
+- `performAsync(...args)` run a job ASAP
+- `performIn(msec, ...args)` run a job after a duration
+- `performOn(date, ...args)` run a job at a specific date
 
 ### Error Handling
 
