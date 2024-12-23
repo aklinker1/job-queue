@@ -2,9 +2,8 @@
  * Using a custom made line chart to keep bundle size as small as possible. d3
  * or chart.js would grow it kilobytes to megabytes.
  */
-import { createSignal, Index, Show } from "solid-js";
+import { createMemo, createSignal, Index, Show } from "solid-js";
 import useElementSize from "../hooks/useElementSize.ts";
-import { createMemo } from "solid-js";
 
 export interface LineChartSeries {
   name: string;
@@ -30,6 +29,8 @@ export interface LineChartProps {
 export default (props: LineChartProps) => {
   const [container, setContainer] = createSignal<HTMLDivElement>();
   const size = useElementSize(container);
+  const [tooltip, setTooltip] = createSignal<HTMLDivElement>();
+  const tooltipSize = useElementSize(tooltip);
 
   const yStepCount = 4;
   const xStepCount = 5;
@@ -39,7 +40,8 @@ export default (props: LineChartProps) => {
   const gridWidth = 1;
   const titleMarginTop = 8;
   const gridTickMargin = 4;
-  const seriesWidth = 4;
+  const seriesWidth = 3;
+  const legendLineWidth = seriesWidth * 6;
   const padding = () => props.padding ?? 0;
 
   const xAxisMin = createMemo(() => Math.min(...props.data.x));
@@ -60,6 +62,8 @@ export default (props: LineChartProps) => {
   });
 
   const [selectedIndex, setSelectedIndex] = createSignal<number>();
+  const [mouseX, setMouseX] = createSignal<number>();
+  const [mouseY, setMouseY] = createSignal<number>();
   const onMouseMove = (event: MouseEvent) => {
     const targetRec = (event.currentTarget as HTMLDivElement)
       .getBoundingClientRect();
@@ -67,6 +71,8 @@ export default (props: LineChartProps) => {
       targetRec.x;
     const mouseY = event.clientY -
       targetRec.y;
+    setMouseX(mouseX);
+    setMouseY(mouseY);
     const { width, height } = size();
 
     // Not hovering over chart
@@ -82,12 +88,15 @@ export default (props: LineChartProps) => {
     const percentOver = mouseX / (width - 2 * padding());
     setSelectedIndex(Math.round(percentOver * xStepCount));
   };
-  const onMouseLeave = () => setSelectedIndex(undefined);
+  const onMouseLeave = () => {
+    setSelectedIndex(undefined);
+    setMouseY(undefined);
+  };
 
   return (
     <div
       ref={setContainer}
-      class={props.class}
+      class={`relative ${props.class}`}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
@@ -270,7 +279,7 @@ export default (props: LineChartProps) => {
                         (series().y[i] / yAxisMax()) *
                           (size().height - 2 * padding())
                       }px; transform: scale(${
-                        i === selectedIndex() ? 3 : 0
+                        i === selectedIndex() ? 3 : 1
                       }); transition: transform 250ms ease`}
                     />
                   </>
@@ -299,6 +308,68 @@ export default (props: LineChartProps) => {
           )}
         </Index>
       </svg>
+
+      {/* Tooltip */}
+      <Show
+        when={mouseY() != null && mouseX() != null && selectedIndex() != null}
+      >
+        <div
+          ref={setTooltip}
+          class="bg-gray-100 absolute shadow-lg rounded-xl"
+          style={`top: ${
+            Math.min(mouseY()!, size().height - tooltipSize().height)
+          }px; left: ${
+            Math.min(mouseX()!, size().width - tooltipSize().width)
+          }px`}
+        >
+          <div class="p4 flex flex-col gap-2">
+            <p>
+              {props.format?.xAxisLabel?.(props.data.x[selectedIndex()!]) ??
+                props.data.x[selectedIndex()!]}
+            </p>
+            <table>
+              <tbody>
+                <Index each={props.data.series}>
+                  {(series) => (
+                    <tr>
+                      <td>
+                        <svg
+                          width={legendLineWidth}
+                          viewBox={`0 0 ${legendLineWidth} ${seriesWidth * 3}`}
+                        >
+                          <circle
+                            r={seriesWidth * 3 / 2}
+                            cx={legendLineWidth / 2}
+                            cy={seriesWidth * 3 / 2}
+                            fill={series().color}
+                          />
+                          <line
+                            x1={seriesWidth / 2}
+                            x2={legendLineWidth - seriesWidth / 2}
+                            y1={seriesWidth * 3 / 2}
+                            y2={seriesWidth * 3 / 2}
+                            stroke={series().color}
+                            stroke-width={seriesWidth}
+                            stroke-linecap="round"
+                          />
+                        </svg>
+                      </td>
+                      <td class="px-2">
+                        {series().name}
+                      </td>
+                      <td class="font-bold">
+                        {props.format?.yAxisLabel?.(
+                          series().y[selectedIndex()!],
+                        ) ?? series().y[selectedIndex()!]}
+                      </td>
+                    </tr>
+                  )}
+                </Index>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 };

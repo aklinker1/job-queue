@@ -18,6 +18,7 @@ export type WinterCGFetch = (request: Request) => Response | Promise<Response>;
  * Create a WinterCG compliant `fetch` function that adds the following endpoints to your server:
  *
  * - `GET {basePath}/api/counts`: Returns the result of `queue.getCounts`
+ * - `GET {basePath}/api/stats`: Returns the result of `queue.getStats`
  * - `GET {basePath}/api/jobs/enqueued`: Returns the result of `queue.getEnqueuedJobs`
  * - `GET {basePath}/api/jobs/failed`: Returns the result of `queue.getFailedJobs`
  * - `GET {basePath}/api/jobs/dead`: Returns the result of `queue.getDeadJobs`
@@ -63,6 +64,24 @@ export const createServer = (options: CreateServerOptions): WinterCGFetch => {
     const router = createFetchRouter(basePath)
       .get(`/api/counts`, () => {
         return Response.json(queue.getCounts());
+      })
+      .get(`/api/stats`, ({ url }) => {
+        const startDateStr = url.searchParams.get("startDate");
+        const endDateStr = url.searchParams.get("endDate");
+        const granularityStr = url.searchParams.get("granularity");
+
+        if (!startDateStr || !endDateStr || !granularityStr) {
+          return badRequest(
+            '"startDate", "endDate", and "granularity" are all required',
+          );
+        }
+
+        const stats = queue.getStats({
+          startDate: new Date(startDateStr),
+          endDate: new Date(endDateStr),
+          granularity: granularityStr as any,
+        });
+        return Response.json(stats);
       })
       .get(`/api/jobs/enqueued`, () => {
         return Response.json(queue.getEnqueuedEntries());

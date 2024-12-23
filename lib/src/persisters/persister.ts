@@ -20,6 +20,18 @@ export interface Persister {
   getFailedEntries(): QueueEntry[];
   /** `getEnqueuedEntries` returns the job entries that died and will not be retried. */
   getDeadEntries(): QueueEntry[];
+  /** Get stats over time. */
+  getStats(input: {
+    startDate: Date;
+    endDate: Date;
+    granularity: "minute" | "hour" | "day" | "week" | "month";
+  }): {
+    buckets: number[];
+    stats: Array<{
+      state: QueueState;
+      values: number[];
+    }>;
+  };
 }
 
 /** Object without default values that can be inserted into a persister. */

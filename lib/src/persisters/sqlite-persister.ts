@@ -110,6 +110,14 @@ export function createSqlitePersister(
       GROUP BY state
     ) t;
   `);
+  const getStatsStatement = db.prepare<
+    QueueEntry,
+    [startTime: number, endTime: number, startTime: number, endTime: number]
+  >(`
+    SELECT * FROM entries
+    WHERE (state = ${QueueState.Enqueued}  AND addedAt BETWEEN ? AND ?)
+    OR    (state != ${QueueState.Enqueued} AND endedAt BETWEEN ? AND ?)
+  `);
 
   const parseDbEntry = (entry: QueueEntry): QueueEntry => ({
     ...entry,
@@ -163,6 +171,61 @@ export function createSqlitePersister(
   const getDeadEntries: Persister["getDeadEntries"] = () =>
     getDeadStatement.all().map(parseDbEntry);
 
+  const getStats: Persister["getStats"] = (
+    { startDate, endDate, granularity },
+  ) => {
+    const startTime = startDate.getTime();
+    const endTime = endDate.getTime();
+    const bucketSize = BUCKET_SIZES[granularity];
+    if (bucketSize == null) {
+      throw Error(
+        `Unknown granularity (${granularity}), must be one of: ${
+          Object.keys(BUCKET_SIZES).join(", ")
+        }`,
+      );
+    }
+    const buckets: number[] = [startTime];
+    let i = startTime;
+    while (i <= endTime) {
+      i += bucketSize;
+      buckets.push(i);
+    }
+
+    const items = getStatsStatement.all(startTime, endTime, startTime, endTime);
+    const results: ReturnType<Persister["getStats"]> = {
+      buckets,
+      stats: [
+        { state: QueueState.Enqueued, values: [] },
+        { state: QueueState.Processed, values: [] },
+        { state: QueueState.Failed, values: [] },
+        { state: QueueState.Dead, values: [] },
+        { state: QueueState.Retried, values: [] },
+      ],
+    };
+    for (const bucket of buckets) {
+      results[bucket] = {
+        [QueueState.Enqueued]: 0,
+        [QueueState.Processed]: 0,
+        [QueueState.Failed]: 0,
+        [QueueState.Dead]: 0,
+        [QueueState.Retried]: 0,
+      };
+    }
+
+    for (const item of items) {
+      const bucketTime = buckets.find(
+        (bucket) =>
+          item.state === QueueState.Enqueued
+            ? bucket >= item.addedAt
+            : bucket >= item.endedAt!,
+      )!;
+      const time = bucketTime - bucketSize;
+      results[time][item.state]++;
+    }
+
+    return results;
+  };
+
   return {
     get,
     insert,
@@ -171,6 +234,7 @@ export function createSqlitePersister(
     setDeadState,
     setRetriedState,
     getCounts,
+    getStats,
     getEnqueuedEntries,
     getFailedEntries,
     getDeadEntries,
@@ -211,3 +275,11 @@ interface TypeSafeSqliteDb {
     run(...args: TArgs): void;
   };
 }
+
+const BUCKET_SIZES = {
+  minute: 60000,
+  hour: 3600000,
+  day: 86400000,
+  week: 604800000,
+  month: 2629800000,
+};
