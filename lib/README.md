@@ -73,17 +73,32 @@ const processPdf = queue.defineJob({
 > Job arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
 
 > [!WARNING]
-> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, the app restarts, or from failire), jobs will be interrupted half-way through and they must be designed to be re-ran safely. 
+> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, the app restarts, or from failure), jobs will be interrupted half-way through and they must be designed to be re-ran safely. 
 >
 > Basically, each job is guaranteed to ran **at least once**, but **not only once**, and you need to design your jobs around this behavior.
 
-### Performing Jobs
+### Scheduling Jobs
 
 There are three ways to schedule a job to run:
 
 - `performAsync(...args)` run a job ASAP
 - `performIn(msec, ...args)` run a job after a duration
 - `performOn(date, ...args)` run a job at a specific date
+
+#### Cron
+
+This library does not provide any APIs for scheduling or running tasks on an interval. Instead, use an existing library like `croner` (available on both [NPM](https://www.npmjs.com/package/croner) and [JSR](https://jsr.io/@hexagon/croner)) to schedule tasks:
+
+```ts
+import { Cron } from "croner";
+
+const exampleJob = queue.defineJob({
+  // ...
+});
+
+// Schedule to run every day at midnight
+new Cron("@daily", () => exampleJob.performAsync());
+```
 
 ### Error Handling
 
@@ -113,21 +128,6 @@ const job3 = queue.defineJob({
   // ...
   retry: false,
 });
-```
-
-### Cron Jobs/Scheduling
-
-This library does not provide any APIs for scheduling or running tasks on an interval. Instead, use an existing library like `croner` (available on both [NPM](https://www.npmjs.com/package/croner) and [JSR](https://jsr.io/@hexagon/croner)) to schedule tasks:
-
-```ts
-import { Cron } from "croner";
-
-const exampleJob = queue.defineJob({
-  // ...
-});
-
-// Schedule to run every day at midnight
-new Cron("@daily", () => exampleJob.performAsync());
 ```
 
 ### Add Dashboard to Web App
