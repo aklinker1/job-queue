@@ -26,10 +26,10 @@ export interface Persister {
     endDate: Date;
     granularity: "minute" | "hour" | "day" | "week" | "month";
   }): {
-    buckets: number[];
-    stats: Array<{
-      state: QueueState;
-      values: number[];
+    x: number[];
+    series: Array<{
+      name: string;
+      y: number[];
     }>;
   };
 }
@@ -73,4 +73,20 @@ export interface GetCountsResponse {
   enqueued: number;
   failed: number;
   dead: number;
+}
+
+/** Stores when a job's state changes. Used to calculate stats. */
+export interface StateChange {
+  id: number;
+  entryId: number;
+  state: number;
+  timestamp: number;
+}
+
+export interface StatsResponse {
+  x: number[];
+  series: Array<{
+    name: string;
+    y: number[];
+  }>;
 }

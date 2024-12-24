@@ -7,6 +7,8 @@ import type {
   Persister,
   QueueEntry,
   QueueEntryInsert,
+  StateChange,
+  StatsResponse,
 } from "./persister.ts";
 import { QueueState } from "./persister.ts";
 import { stringifyError } from "../utils.ts";
@@ -70,6 +72,24 @@ export function createSqlitePersister(
     db.exec("CREATE INDEX entries_state_idx ON entries (state)");
     db.exec("CREATE INDEX entries_addedAt_idx ON entries (addedAt)");
     db.exec("INSERT INTO migrations (id) VALUES ('0002-runAt-not-null')");
+  }
+  if (getMigration.get("0003-add-state-tracking") == null) {
+    db.exec(`
+      CREATE TABLE state_changes (
+        id INTEGER PRIMARY KEY,
+        entryId INTEGER NOT NULL,
+        state INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
+        FOREIGN KEY (entryId) REFERENCES entries (id)
+      )
+    `);
+    db.exec(
+      "CREATE INDEX state_changes_entryId_idx ON state_changes (entryId)",
+    );
+    db.exec(
+      "CREATE INDEX state_changes_timestamp_idx ON state_changes (timestamp)",
+    );
+    db.exec("INSERT INTO migrations (id) VALUES ('0003-add-state-tracking')");
   }
 
   const getStatement = db.prepare<QueueEntry, [id: QueueEntry["id"]]>(
@@ -136,13 +156,21 @@ export function createSqlitePersister(
     ) t;
   `);
   const getStatsStatement = db.prepare<
-    QueueEntry,
-    [startTime: number, endTime: number, startTime: number, endTime: number]
+    StateChange,
+    [startTime: number, endTime: number]
   >(`
-    SELECT * FROM entries
-    WHERE (state = ${QueueState.Enqueued}  AND addedAt BETWEEN ? AND ?)
-    OR    (state != ${QueueState.Enqueued} AND endedAt BETWEEN ? AND ?)
+    SELECT * FROM state_changes WHERE timestamp BETWEEN ? AND ?
   `);
+  const addStateChange = db.prepare<
+    unknown,
+    [
+      entryId: number,
+      state: QueueState,
+      timestamp: number,
+    ]
+  >(
+    "INSERT INTO state_changes (entryId, state, timestamp) VALUES (?, ?, ?)",
+  );
 
   const parseDbEntry = (entry: QueueEntry): QueueEntry => ({
     ...entry,
@@ -164,6 +192,11 @@ export function createSqlitePersister(
       entry.addedAt,
       entry.retries ?? 0,
     )!;
+    addStateChange.run(
+      res.id,
+      QueueState.Enqueued,
+      Date.now(),
+    );
     return {
       ...res,
       args: entry.args,
@@ -171,15 +204,35 @@ export function createSqlitePersister(
   };
   const setProcessedState: Persister["setProcessedState"] = (id, endedAt) => {
     setProcessedStateStatement.run(endedAt, id);
+    addStateChange.run(
+      id,
+      QueueState.Processed,
+      Date.now(),
+    );
   };
   const setFailedState: Persister["setFailedState"] = (id, endedAt, err) => {
     setFailedStateStatement.run(endedAt, stringifyError(err), id);
+    addStateChange.run(
+      id,
+      QueueState.Failed,
+      Date.now(),
+    );
   };
   const setDeadState: Persister["setDeadState"] = (id, endedAt, err) => {
     setDeadStateStatement.run(endedAt, stringifyError(err), id);
+    addStateChange.run(
+      id,
+      QueueState.Dead,
+      Date.now(),
+    );
   };
   const setRetriedState: Persister["setRetriedState"] = (id) => {
     setRetriedStateStatement.run(id);
+    addStateChange.run(
+      id,
+      QueueState.Retried,
+      Date.now(),
+    );
   };
   const getCounts: Persister["getCounts"] = () => {
     const res = getCountsStatement.get()!;
@@ -216,36 +269,23 @@ export function createSqlitePersister(
       buckets.push(i);
     }
 
-    const items = getStatsStatement.all(startTime, endTime, startTime, endTime);
-    const results: ReturnType<Persister["getStats"]> = {
-      buckets,
-      stats: [
-        { state: QueueState.Enqueued, values: [] },
-        { state: QueueState.Processed, values: [] },
-        { state: QueueState.Failed, values: [] },
-        { state: QueueState.Dead, values: [] },
-        { state: QueueState.Retried, values: [] },
+    const items = getStatsStatement.all(startTime, endTime);
+    const results: StatsResponse = {
+      x: buckets,
+      series: [
+        { name: "Enqueued", y: [...buckets].fill(0) },
+        { name: "Processed", y: [...buckets].fill(0) },
+        { name: "Failed", y: [...buckets].fill(0) },
+        { name: "Dead", y: [...buckets].fill(0) },
+        { name: "Retried", y: [...buckets].fill(0) },
       ],
     };
-    for (const bucket of buckets) {
-      results[bucket] = {
-        [QueueState.Enqueued]: 0,
-        [QueueState.Processed]: 0,
-        [QueueState.Failed]: 0,
-        [QueueState.Dead]: 0,
-        [QueueState.Retried]: 0,
-      };
-    }
 
     for (const item of items) {
-      const bucketTime = buckets.find(
-        (bucket) =>
-          item.state === QueueState.Enqueued
-            ? bucket >= item.addedAt
-            : bucket >= item.endedAt!,
+      const bucketIndex = buckets.findIndex(
+        (bucket) => bucket >= item.timestamp,
       )!;
-      const time = bucketTime - bucketSize;
-      results[time][item.state]++;
+      results.series[item.state].y[bucketIndex]++;
     }
 
     return results;

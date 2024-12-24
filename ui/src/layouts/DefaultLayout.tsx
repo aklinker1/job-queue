@@ -39,7 +39,7 @@ export default (props: ParentProps) => {
               <span class="hidden md:block">Enqueued</span>
               <Show when={counts()}>
                 {(counts) => (
-                  <span class="badge badge-blue font-mono">
+                  <span class="badge badge-state-enqueued font-mono">
                     {counts().enqueued}
                   </span>
                 )}
@@ -52,7 +52,7 @@ export default (props: ParentProps) => {
               <span class="hidden md:block">Failed</span>
               <Show when={counts()}>
                 {(counts) => (
-                  <span class="badge badge-amber font-mono">
+                  <span class="badge badge-state-failed font-mono">
                     {counts().failed}
                   </span>
                 )}
@@ -65,7 +65,7 @@ export default (props: ParentProps) => {
               <span class="hidden md:block">Dead</span>
               <Show when={counts()}>
                 {(counts) => (
-                  <span class="badge badge-red font-mono">
+                  <span class="badge badge-state-dead font-mono">
                     {counts().dead}
                   </span>
                 )}

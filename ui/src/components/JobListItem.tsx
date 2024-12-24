@@ -2,24 +2,14 @@ import type { QueueEntry } from "@aklinker1/job-queue";
 import { Show } from "solid-js";
 import { events } from "../utils/events.ts";
 import { serializeError } from "serialize-error";
+import { QUEUE_STATE_NAMES } from "../utils/colors.ts";
 
 export default (
   props: { job: QueueEntry; dateToShow: "addedAt" | "endedAt" },
 ) => {
-  const stateText = () => {
-    if (props.job.state === 0) return "Enqueued";
-    if (props.job.state === 1) return "Processed";
-    if (props.job.state === 2) return "Failed";
-    if (props.job.state === 3) return "Dead";
-    return "Unknown";
-  };
-  const stateColor = () => {
-    if (props.job.state === 0) return "blue";
-    if (props.job.state === 1) return "green";
-    if (props.job.state === 2) return "amber";
-    if (props.job.state === 3) return "red";
-    return "black";
-  };
+  const stateText = () => QUEUE_STATE_NAMES[props.job.state] ?? "Unknown";
+  const stateColor = () =>
+    "state-" + (QUEUE_STATE_NAMES[props.job.state]?.toLowerCase() ?? "unknown");
 
   const retry = async () => {
     try {
@@ -47,7 +37,7 @@ export default (
           <p class={`badge badge-${stateColor()} mr-1`}>{stateText()}</p>
           <Show when={props.job.runAt}>
             {(runAt) => (
-              <p class="badge badge-blue mr-1">
+              <p class="badge badge-state-enqueued mr-1">
                 Scheduled {new Date(runAt()).toISOString()}
               </p>
             )}

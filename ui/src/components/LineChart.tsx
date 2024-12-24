@@ -7,9 +7,7 @@ import useElementSize from "../hooks/useElementSize.ts";
 
 export interface LineChartSeries {
   name: string;
-  color: string;
   y: number[];
-  hidden?: boolean;
 }
 
 export interface LineChartProps {
@@ -17,6 +15,12 @@ export interface LineChartProps {
   data: {
     series: Array<LineChartSeries>;
     x: number[];
+  };
+  colors: {
+    [seriesName: string]: string;
+  };
+  hiddenSeries: {
+    [seriesName: string]: boolean;
   };
   title: string;
   padding?: number;
@@ -44,22 +48,24 @@ export default (props: LineChartProps) => {
   const legendLineWidth = seriesWidth * 6;
   const padding = () => props.padding ?? 0;
 
-  const xAxisMin = createMemo(() => Math.min(...props.data.x));
-  const xAxisMax = createMemo(() => Math.max(...props.data.x));
+  const minX = createMemo(() => Math.min(...props.data.x));
+  const maxX = createMemo(() => Math.max(...props.data.x));
   const xAxisTicks = createMemo(() => {
-    const step = Math.ceil((xAxisMin() - xAxisMax()) / xStepCount);
+    const step = Math.ceil((minX() - maxX()) / xStepCount);
     return Array.from({ length: xStepCount + 1 }).map((_, i) =>
-      xAxisMin() + step * i
+      minX() + step * i
     );
   });
 
-  const yAxisMax = createMemo(() =>
+  const maxY = createMemo(() =>
     Math.max(...props.data.series.flatMap((series) => series.y))
   );
+  const yAxisStepSize = () => Math.ceil(maxY() / yStepCount);
   const yAxisTicks = createMemo(() => {
-    const step = Math.ceil(yAxisMax() / yStepCount);
+    const step = yAxisStepSize();
     return Array.from({ length: yStepCount }).map((_, i) => step * (i + 1));
   });
+  const yAxisMax = () => yAxisStepSize() * yStepCount;
 
   const [selectedIndex, setSelectedIndex] = createSignal<number>();
   const [mouseX, setMouseX] = createSignal<number>();
@@ -85,8 +91,11 @@ export default (props: LineChartProps) => {
     }
 
     // Hovering over chart, find nearest index.
-    const percentOver = mouseX / (width - 2 * padding());
-    setSelectedIndex(Math.round(percentOver * xStepCount));
+    const percentOver = (mouseX - padding()) / (width - 2 * padding());
+    const newSelectedIndex = Math.round(
+      percentOver * (props.data.x.length - 1),
+    );
+    setSelectedIndex(newSelectedIndex);
   };
   const onMouseLeave = () => {
     setSelectedIndex(undefined);
@@ -243,9 +252,11 @@ export default (props: LineChartProps) => {
           {(selectedIndex) => (
             <line
               data-id="selected-highlight"
-              x1={selectedIndex() * (size().width - 2 * padding()) / xStepCount}
+              x1={selectedIndex() * (size().width - 2 * padding()) /
+                (props.data.x.length - 1)}
               y1={padding()}
-              x2={selectedIndex() * (size().width - 2 * padding()) / xStepCount}
+              x2={selectedIndex() * (size().width - 2 * padding()) /
+                (props.data.x.length - 1)}
               y2={size().height - padding() - axisWidth / 2 - tickLength -
                 gridTickMargin}
               stroke="black"
@@ -257,22 +268,22 @@ export default (props: LineChartProps) => {
         {/* Series */}
         <Index each={props.data.series}>
           {(series) => (
-            <Show when={!series().hidden}>
+            <Show when={!props.hiddenSeries[series().name]}>
               <Index each={props.data.x}>
                 {(x, i) => (
                   <>
                     {/* Point */}
                     <circle
                       data-id={`series-${series().name}-point-${i}`}
-                      cx={(x() - xAxisMin()) / (xAxisMax() - xAxisMin()) *
+                      cx={(x() - minX()) / (maxX() - minX()) *
                           (size().width - 2 * padding()) + padding()}
                       cy={size().height - padding() -
                         (series().y[i] / yAxisMax()) *
                           (size().height - 2 * padding())}
                       r={seriesWidth / 2}
-                      fill={series().color}
+                      fill={props.colors[series().name]}
                       style={`transform-origin: ${
-                        (x() - xAxisMin()) / (xAxisMax() - xAxisMin()) *
+                        (x() - minX()) / (maxX() - minX()) *
                           (size().width - 2 * padding()) + padding()
                       }px ${
                         size().height - padding() -
@@ -290,7 +301,7 @@ export default (props: LineChartProps) => {
                 data-id={`series-${series().name}-line`}
                 points={props.data.x.map((x, i) =>
                   `${
-                    (x - xAxisMin()) / (xAxisMax() - xAxisMin()) *
+                    (x - minX()) / (maxX() - minX()) *
                       (size().width - 2 * padding()) + padding()
                   },${
                     size().height - padding() -
@@ -298,7 +309,7 @@ export default (props: LineChartProps) => {
                       (size().height - 2 * padding())
                   }`
                 ).join(" ")}
-                stroke={series().color}
+                stroke={props.colors[series().name]}
                 stroke-width={seriesWidth}
                 fill="none"
                 stroke-linecap="round"
@@ -341,14 +352,14 @@ export default (props: LineChartProps) => {
                             r={seriesWidth * 3 / 2}
                             cx={legendLineWidth / 2}
                             cy={seriesWidth * 3 / 2}
-                            fill={series().color}
+                            fill={props.colors[series().name]}
                           />
                           <line
                             x1={seriesWidth / 2}
                             x2={legendLineWidth - seriesWidth / 2}
                             y1={seriesWidth * 3 / 2}
                             y2={seriesWidth * 3 / 2}
-                            stroke={series().color}
+                            stroke={props.colors[series().name]}
                             stroke-width={seriesWidth}
                             stroke-linecap="round"
                           />
