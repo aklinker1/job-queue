@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.6.6
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.5...v0.6.6)
+
+### 🚀 Enhancements
+
+- Add chart to dashboad ([#11](https://github.com/aklinker1/job-queue/pull/11))
+
+### 🩹 Fixes
+
+- Require `runAt` for `QueueEntry.runAt` ([#12](https://github.com/aklinker1/job-queue/pull/12))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.5
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.4...v0.6.5)
