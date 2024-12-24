@@ -7,6 +7,8 @@ import type {
   Persister,
   QueueEntry,
   QueueEntryInsert,
+  StateChange,
+  StatsResponse,
 } from "./persister.ts";
 import { QueueState } from "./persister.ts";
 import { stringifyError } from "../utils.ts";
@@ -70,6 +72,24 @@ export function createSqlitePersister(
     db.exec("CREATE INDEX entries_state_idx ON entries (state)");
     db.exec("CREATE INDEX entries_addedAt_idx ON entries (addedAt)");
     db.exec("INSERT INTO migrations (id) VALUES ('0002-runAt-not-null')");
+  }
+  if (getMigration.get("0003-add-state-tracking") == null) {
+    db.exec(`
+      CREATE TABLE state_changes (
+        id INTEGER PRIMARY KEY,
+        entryId INTEGER NOT NULL,
+        state INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
+        FOREIGN KEY (entryId) REFERENCES entries (id)
+      )
+    `);
+    db.exec(
+      "CREATE INDEX state_changes_entryId_idx ON state_changes (entryId)",
+    );
+    db.exec(
+      "CREATE INDEX state_changes_timestamp_idx ON state_changes (timestamp)",
+    );
+    db.exec("INSERT INTO migrations (id) VALUES ('0003-add-state-tracking')");
   }
 
   const getStatement = db.prepare<QueueEntry, [id: QueueEntry["id"]]>(
@@ -135,6 +155,20 @@ export function createSqlitePersister(
       GROUP BY state
     ) t;
   `);
+  const getStatsStatement = db.prepare<
+    StateChange,
+    [startTime: number, endTime: number]
+  >("SELECT * FROM state_changes WHERE timestamp BETWEEN ? AND ?");
+  const addStateChange = db.prepare<
+    unknown,
+    [
+      entryId: number,
+      state: QueueState,
+      timestamp: number,
+    ]
+  >(
+    "INSERT INTO state_changes (entryId, state, timestamp) VALUES (?, ?, ?)",
+  );
 
   const parseDbEntry = (entry: QueueEntry): QueueEntry => ({
     ...entry,
@@ -156,6 +190,11 @@ export function createSqlitePersister(
       entry.addedAt,
       entry.retries ?? 0,
     )!;
+    addStateChange.run(
+      res.id,
+      QueueState.Enqueued,
+      Date.now(),
+    );
     return {
       ...res,
       args: entry.args,
@@ -163,15 +202,35 @@ export function createSqlitePersister(
   };
   const setProcessedState: Persister["setProcessedState"] = (id, endedAt) => {
     setProcessedStateStatement.run(endedAt, id);
+    addStateChange.run(
+      id,
+      QueueState.Processed,
+      Date.now(),
+    );
   };
   const setFailedState: Persister["setFailedState"] = (id, endedAt, err) => {
     setFailedStateStatement.run(endedAt, stringifyError(err), id);
+    addStateChange.run(
+      id,
+      QueueState.Failed,
+      Date.now(),
+    );
   };
   const setDeadState: Persister["setDeadState"] = (id, endedAt, err) => {
     setDeadStateStatement.run(endedAt, stringifyError(err), id);
+    addStateChange.run(
+      id,
+      QueueState.Dead,
+      Date.now(),
+    );
   };
   const setRetriedState: Persister["setRetriedState"] = (id) => {
     setRetriedStateStatement.run(id);
+    addStateChange.run(
+      id,
+      QueueState.Retried,
+      Date.now(),
+    );
   };
   const getCounts: Persister["getCounts"] = () => {
     const res = getCountsStatement.get()!;
@@ -188,6 +247,48 @@ export function createSqlitePersister(
   const getDeadEntries: Persister["getDeadEntries"] = () =>
     getDeadStatement.all().map(parseDbEntry);
 
+  const getStats: Persister["getStats"] = (
+    { startDate, endDate, granularity },
+  ) => {
+    const startTime = startDate.getTime();
+    const endTime = endDate.getTime();
+    const bucketSize = BUCKET_SIZES[granularity];
+    if (bucketSize == null) {
+      throw Error(
+        `Unknown granularity (${granularity}), must be one of: ${
+          Object.keys(BUCKET_SIZES).join(", ")
+        }`,
+      );
+    }
+    const buckets: number[] = [startTime];
+    let i = startTime;
+    while (i <= endTime) {
+      i += bucketSize;
+      buckets.push(i);
+    }
+
+    const items = getStatsStatement.all(startTime, endTime);
+    const results: StatsResponse = {
+      x: buckets,
+      series: [
+        { name: "Enqueued", y: [...buckets].fill(0) },
+        { name: "Processed", y: [...buckets].fill(0) },
+        { name: "Failed", y: [...buckets].fill(0) },
+        { name: "Dead", y: [...buckets].fill(0) },
+        { name: "Retried", y: [...buckets].fill(0) },
+      ],
+    };
+
+    for (const item of items) {
+      const bucketIndex = buckets.findIndex(
+        (bucket) => bucket >= item.timestamp,
+      )!;
+      results.series[item.state].y[bucketIndex]++;
+    }
+
+    return results;
+  };
+
   return {
     get,
     insert,
@@ -196,6 +297,7 @@ export function createSqlitePersister(
     setDeadState,
     setRetriedState,
     getCounts,
+    getStats,
     getEnqueuedEntries,
     getFailedEntries,
     getDeadEntries,
@@ -236,3 +338,11 @@ interface TypeSafeSqliteDb {
     run(...args: TArgs): void;
   };
 }
+
+const BUCKET_SIZES = {
+  minute: 60000,
+  hour: 3600000,
+  day: 86400000,
+  week: 604800000,
+  month: 2629800000,
+};

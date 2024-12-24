@@ -15,7 +15,11 @@ export * from "./queues/queue.ts";
 export interface JobQueue<TQueueName extends string> extends
   Pick<
     Persister,
-    "getCounts" | "getEnqueuedEntries" | "getDeadEntries" | "getFailedEntries"
+    | "getCounts"
+    | "getEnqueuedEntries"
+    | "getDeadEntries"
+    | "getFailedEntries"
+    | "getStats"
   > {
   /**
    * Define a job on the queue.
@@ -211,6 +215,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
       });
     },
     getCounts: () => persister.getCounts(),
+    getStats: (input) => persister.getStats(input),
     getEnqueuedEntries: () => persister.getEnqueuedEntries(),
     getFailedEntries: () => persister.getFailedEntries(),
     getDeadEntries: () => persister.getDeadEntries(),
