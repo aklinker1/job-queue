@@ -46,6 +46,31 @@ export function createSqlitePersister(
     db.exec("CREATE INDEX entries_addedAt_idx ON entries (addedAt)");
     db.exec("INSERT INTO migrations (id) VALUES ('0001-create-entries')");
   }
+  if (getMigration.get("0002-runAt-not-null") == null) {
+    db.exec("UPDATE entries SET runAt = addedAt WHERE runAt IS NULL");
+    db.exec(`
+      CREATE TABLE entries_new (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        args TEXT NOT NULL,
+        queue TEXT NOT NULL,
+        runAt INTEGER NOT NULL,
+        state INTEGER DEFAULT 0,
+        addedAt INTEGER NOT NULL,
+        endedAt INTEGER,
+        retries INTEGER DEFAULT 0,
+        error TEXT
+      )
+    `);
+    db.exec("INSERT INTO entries_new SELECT * FROM entries");
+    db.exec("DROP TABLE entries");
+    db.exec("ALTER TABLE entries_new RENAME TO entries");
+    db.exec("CREATE INDEX entries_queue_idx ON entries (queue)");
+    db.exec("CREATE INDEX entries_runAt_idx ON entries (runAt)");
+    db.exec("CREATE INDEX entries_state_idx ON entries (state)");
+    db.exec("CREATE INDEX entries_addedAt_idx ON entries (addedAt)");
+    db.exec("INSERT INTO migrations (id) VALUES ('0002-runAt-not-null')");
+  }
 
   const getStatement = db.prepare<QueueEntry, [id: QueueEntry["id"]]>(
     `SELECT * FROM entries WHERE id = ?`,

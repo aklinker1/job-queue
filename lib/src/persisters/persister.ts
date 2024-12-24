@@ -28,7 +28,7 @@ export interface QueueEntryInsert {
   // deno-lint-ignore no-explicit-any
   args: any;
   queue: string;
-  runAt: number | null;
+  runAt: number;
   addedAt: number;
   retries?: number;
 }
