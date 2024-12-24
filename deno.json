@@ -2,7 +2,8 @@
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "workspace": ["./lib", "./ui"],
   "tasks": {
-    "dev": "cd ui && deno task dev"
+    "dev": "cd ui && deno task dev",
+    "build": "cd ui && deno task build"
   },
   "imports": {
     "@types/semver": "npm:@types/semver@^7.5.8",
