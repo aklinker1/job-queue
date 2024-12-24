@@ -158,9 +158,7 @@ export function createSqlitePersister(
   const getStatsStatement = db.prepare<
     StateChange,
     [startTime: number, endTime: number]
-  >(`
-    SELECT * FROM state_changes WHERE timestamp BETWEEN ? AND ?
-  `);
+  >("SELECT * FROM state_changes WHERE timestamp BETWEEN ? AND ?");
   const addStateChange = db.prepare<
     unknown,
     [
