@@ -27,7 +27,7 @@ export default () => {
 
   return (
     <div class="fixed inset-0 top-14 flex flex-col p-4 gap-4">
-      <div>Buttons</div>
+      {/* <div>Buttons</div> */}
       <Show when={stats()}>
         {(stats) => (
           <LineChart
