@@ -1,6 +1,6 @@
 # `@aklinker1/job-queue`
 
-[Docs](https://jsr.io/@aklinker1/job-queue#usage) &bull; [Changelog](https://github.com/aklinker1/job-queue/blob/main/CHANGELOG.md) &bull; [API Reference](https://jsr.io/@aklinker1/job-queue/doc)
+[Docs](https://jsr.io/@aklinker1/job-queue) &bull; [Changelog](https://github.com/aklinker1/job-queue/blob/main/CHANGELOG.md) &bull; [API Reference](https://jsr.io/@aklinker1/job-queue/doc)
 
 Lightweight single process job queue.
 
@@ -73,7 +73,7 @@ const processPdf = queue.defineJob({
 > Job arguments must be serializable via `JSON.stringify`. So you can't pass class instances, circular objects, or functions.
 
 > [!WARNING]
-> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, the app restarts, or from failure), jobs will be interrupted half-way through and they must be designed to be re-ran safely. 
+> Jobs must be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (they must be safe to re-run). If the application is stopped (from power loss, the app restarts, or from failure), jobs will be interrupted half-way through and they must be designed to be re-ran safely.
 >
 > Basically, each job is guaranteed to ran **at least once**, but **not only once**, and you need to design your jobs around this behavior.
 
