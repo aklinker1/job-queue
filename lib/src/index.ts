@@ -63,7 +63,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
     return inserted;
   };
   const schedule = (entry: QueueEntry) => {
-    if (entry.runAt == null) {
+    if (entry.runAt <= Date.now()) {
       scheduler.add(entry);
     } else {
       setTimeout(() => scheduler.add(entry), entry.runAt - Date.now());
@@ -140,7 +140,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
           args,
           queue,
           addedAt: Date.now(),
-          runAt: null,
+          runAt: Date.now(),
         }),
       performAt: (date, ...args) =>
         persistAndSchedule({
@@ -171,7 +171,7 @@ export function createJobQueue<TQueue extends string = DefaultQueues>(
       args: entry.args,
       name: entry.name,
       addedAt: now,
-      runAt: null,
+      runAt: now,
     };
   };
 

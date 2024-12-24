@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.6.5
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.4...v0.6.5)
+
+### 📖 Documentation
+
+- Add section on scheduling ([d2bddcc](https://github.com/aklinker1/job-queue/commit/d2bddcc))
+- Update web UI screenshot ([50d7b56](https://github.com/aklinker1/job-queue/commit/50d7b56))
+- Update README.md ([b7e6055](https://github.com/aklinker1/job-queue/commit/b7e6055))
+- Fix typos ([86e071d](https://github.com/aklinker1/job-queue/commit/86e071d))
+
+### 🏡 Chore
+
+- Generate bundle stats for web UI ([#10](https://github.com/aklinker1/job-queue/pull/10))
+
+### 🤖 CI
+
+- Fix release commit message ([2ee2210](https://github.com/aklinker1/job-queue/commit/2ee2210))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.4
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.3...v0.6.4)
