@@ -196,17 +196,18 @@ function createFetchRouter(basePath: string) {
       return router.on("POST", path, cb);
     },
     on(method: string, path: string, handler: FetchRouterHandler) {
-      const existing = r.lookup(basePath + path);
+      const existing = r.lookup(path);
       if (existing?.[method] != null) {
         throw Error(`Handler already defined for: ${method} ${path}`);
       }
-      r.insert(basePath + path, { ...existing, [method]: handler });
+      r.insert(path, { ...existing, [method]: handler });
       return this;
     },
     async fetch(request: Request) {
       try {
         const url = new URL(request.url);
-        const match = r.lookup(url.pathname);
+        const pathname = url.pathname.slice(basePath.length) || "/";
+        const match = r.lookup(pathname);
         const handler = match?.[request.method];
         if (handler == null) {
           return Response.json({
