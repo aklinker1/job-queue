@@ -1,5 +1,5 @@
 import type { QueueEntry } from "@aklinker1/job-queue";
-import { Show } from "solid-js";
+import { Index, Show } from "solid-js";
 import { events } from "../utils/events.ts";
 import { serializeError } from "serialize-error";
 import { QUEUE_STATE_NAMES } from "../utils/colors.ts";
@@ -10,6 +10,17 @@ export default (
   const stateText = () => QUEUE_STATE_NAMES[props.job.state] ?? "Unknown";
   const stateColor = () =>
     "state-" + (QUEUE_STATE_NAMES[props.job.state]?.toLowerCase() ?? "unknown");
+
+  const errors = () => {
+    let current = props.job.error;
+    const errors: unknown[] = [];
+
+    while (current) {
+      errors.push(current);
+      current = (current as any).cause;
+    }
+    return errors;
+  };
 
   const retry = async () => {
     try {
@@ -64,11 +75,17 @@ export default (
 
       {/* Stack Trace */}
       <Show when={props.job.error}>
-        {(error) => (
-          <pre class="flex-1 text-sm px-4 py-3 bg-red:20 text-red overflow-x-auto">{
-            (error() as any).stack ??JSON.stringify(error(), null, 2)
-          }</pre>
-        )}
+        <div class="flex-1 text-sm px-4 py-3 bg-red:20 text-red overflow-x-auto space-y-4">
+          <Index each={errors()}>
+            {(error, index) => (
+              <pre
+                style={`margin-left: ${index * 32}px`}
+              >{
+                (error() as any).stack ??JSON.stringify(error(), null, 2)
+              }</pre>
+            )}
+          </Index>
+        </div>
       </Show>
     </li>
   );
