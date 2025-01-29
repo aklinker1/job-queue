@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.8
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.7...v0.6.8)
+
+### 🩹 Fixes
+
+- Use hash router for dashboard to work around custom base paths ([dc59d52](https://github.com/aklinker1/job-queue/commit/dc59d52))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.7
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.6...v0.6.7)
