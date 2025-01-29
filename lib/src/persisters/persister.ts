@@ -83,6 +83,7 @@ export interface StateChange {
   timestamp: number;
 }
 
+/** Response used for generating graphs on the dashboard. */
 export interface StatsResponse {
   x: number[];
   series: Array<{
