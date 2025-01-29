@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.9
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.8...v0.6.9)
+
+### 🩹 Fixes
+
+- Include cause in job error ([e02c9ef](https://github.com/aklinker1/job-queue/commit/e02c9ef))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.8
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.7...v0.6.8)
