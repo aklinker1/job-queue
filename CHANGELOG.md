@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.6.7
+
+[compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.6...v0.6.7)
+
+### 🩹 Fixes
+
+- `basePath` not resolving routes correctly ([7a1345f](https://github.com/aklinker1/job-queue/commit/7a1345f))
+
+### 📖 Documentation
+
+- Update docs link ([ed81f4f](https://github.com/aklinker1/job-queue/commit/ed81f4f))
+- Add missing JSDoc ([8f41a36](https://github.com/aklinker1/job-queue/commit/8f41a36))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](http://github.com/aklinker1))
+
 ## v0.6.6
 
 [compare changes](https://github.com/aklinker1/job-queue/compare/v0.6.5...v0.6.6)
